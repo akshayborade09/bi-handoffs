@@ -18,7 +18,17 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Stack
+
+- **Next.js** (App Router) with TypeScript
+- **Tailwind CSS** for styling (use only Tailwind classes; see `.cursor/rules/tailwind-and-themes.mdc`)
+- **Tamagui** ([tamagui.dev](https://tamagui.dev/ui/intro)) for UI components with **light/dark** theme via `@tamagui/next-theme`
+- **DM Sans** applied globally via `next/font/google`
+- **Framer Motion** for animations
+- **Lucide React** for icons
+- **Viewport**: `width: device-width`, `initialScale: 1`, `maximumScale: 1`, `userScalable: false`
+
+Theme toggle is in the top-right; develop with both light and dark mode in mind.
 
 ## Learn More
 

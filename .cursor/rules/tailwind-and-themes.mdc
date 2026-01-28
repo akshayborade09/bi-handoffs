@@ -1,0 +1,43 @@
+---
+description: Use only Tailwind CSS for styling; support light and dark mode
+globs: "**/*.{tsx,jsx,css}"
+alwaysApply: true
+---
+
+# Tailwind CSS and Light/Dark Mode
+
+## Styling
+
+- **Use only Tailwind CSS classes** for layout, spacing, colors, typography, and responsive design.
+- Do not add custom CSS (e.g. raw CSS modules or inline styles) unless Tailwind cannot achieve the result.
+- Prefer Tailwind utility classes over Tamagui style props for visual styling when both are available.
+
+## Responsive (Web + Mobile Web)
+
+- **Design for both desktop and mobile web.** Use Tailwind breakpoints: `sm:` (640px), `md:` (768px), `lg:` (1024px), `xl:` (1280px).
+- Prefer fluid layouts: `w-full` with `max-w-*` where needed; use responsive padding (e.g. `px-4 sm:px-6 md:px-8 lg:px-16`).
+- Touch targets on mobile: interactive elements should be at least 44×44px (`min-h-11 min-w-11` or `min-h-12`). Use `touch-manipulation` to reduce tap delay.
+- Use `min-h-dvh` for full-height on mobile (accounts for browser chrome); pair with `md:min-h-screen` if needed.
+- Avoid horizontal overflow: use `overflow-x-hidden` on root when appropriate; test on narrow viewports (320px–400px).
+
+## Light and Dark Mode
+
+- **Always support both light and dark mode** in UI and components.
+- Use Tailwind’s `dark:` variant for dark-mode styles, e.g. `bg-white dark:bg-zinc-950`, `text-zinc-900 dark:text-zinc-100`.
+- Test and verify appearance in both themes during development.
+- Theme is controlled via `NextThemeProvider`; the `dark` class on `<html>` drives Tailwind’s `dark:` variant.
+
+## Examples
+
+```tsx
+// ✅ Good: Tailwind only, light + dark
+<div className="rounded-lg bg-white p-4 shadow dark:bg-zinc-900 dark:shadow-zinc-800">
+  <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Title</h2>
+  <p className="text-zinc-600 dark:text-zinc-400">Description</p>
+</div>
+```
+
+```tsx
+// ❌ Avoid: inline styles or non-Tailwind CSS for layout/colors
+<div style={{ background: 'white', padding: 16 }}>...</div>
+```
