@@ -39,7 +39,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage }: LeftDockP
         <motion.button
           type="button"
           onClick={onToggleExpand}
-          className="fixed left-3 top-3 z-[200] flex min-h-10 min-w-10 touch-manipulation cursor-pointer items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+          className="fixed left-3 top-3 z-[200] flex min-h-10 min-w-10 touch-manipulation cursor-pointer items-center justify-center rounded-xl border border-white/30 bg-white/40 text-zinc-600 shadow-lg backdrop-blur-2xl transition-colors hover:bg-white/50 hover:text-zinc-900 dark:border-white/15 dark:bg-zinc-900/40 dark:text-zinc-400 dark:hover:bg-zinc-900/50 dark:hover:text-zinc-100"
           aria-label="Expand dock"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -53,7 +53,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage }: LeftDockP
 
       {/* Dock panel – slides off-screen left when collapsed, in when expanded */}
       <motion.aside
-        className="fixed left-3 top-3 bottom-3 z-20 flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-900"
+        className="fixed left-3 top-3 bottom-3 z-20 flex flex-col overflow-hidden rounded-xl border border-white/30 bg-white/40 shadow-xl backdrop-blur-2xl dark:border-white/15 dark:bg-zinc-900/40"
         style={{ width: DOCK_WIDTH_EXPANDED }}
         animate={{ x: isExpanded ? 0 : -DOCK_SLIDE_OFFSET }}
         transition={dockTransition}
@@ -64,7 +64,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage }: LeftDockP
             <header className="mb-4 sm:mb-5">
               <div className="flex min-h-11 items-center justify-between gap-2 sm:min-h-10 px-2">
                 <h1 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-xl">
-                  Bonds India Handoffs
+                  Bonds India
                 </h1>
                 <button
                   type="button"
@@ -91,7 +91,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage }: LeftDockP
               ))}
             </ul>
           </div>
-          <div className="shrink-0 flex justify-end border-t border-zinc-200 p-3 dark:border-zinc-700">
+          <div className="shrink-0 flex justify-end border-t border-white/30 p-3 dark:border-white/15">
             <ThemeToggle />
           </div>
         </div>
