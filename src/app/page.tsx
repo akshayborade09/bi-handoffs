@@ -48,16 +48,16 @@ export default function Home() {
       >
         {selectedPageId === "pre-signup-v1" && <PreSignUpV1 />}
         {selectedPageId === "pre-signup-v2" && (
-          <div className="flex h-full items-center justify-center">
-            <h2 className="text-xl text-zinc-500">Pre-Sign Up Version 2 Coming Soon</h2>
+          <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-zinc-50 dark:bg-zinc-950">
+            <h2 className="text-3xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
+              Pre Sign Up V2
+            </h2>
+            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
+              Coming Soon
+            </p>
           </div>
         )}
         {selectedPageId === "post-signup-v1" && <PostSignUpV1 />}
-        {selectedPageId === "post-signup-v2" && (
-          <div className="flex h-full items-center justify-center">
-            <h2 className="text-xl text-zinc-500">Post-Sign Up Version 2 Coming Soon</h2>
-          </div>
-        )}
         {!selectedPageId && (
           <motion.div
             initial={{ opacity: 0 }}
