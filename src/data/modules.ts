@@ -1,17 +1,30 @@
+export interface SubNavChild {
+  label: string;
+  pageId?: string;
+}
+
+export interface ModuleSubNavItem {
+  title: string;
+  children: SubNavChild[];
+}
+
 export interface Module {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   version: string;
+  subNav?: ModuleSubNavItem[];
 }
 
 export const modules: Module[] = [
   {
     id: "1",
-    title: "Module 1: Pre-Sign Up Page",
-    description:
-      "Hero, metrics, bonds, questionnaire, reviews, FAQ, footer, Annotations & refinements",
+    title: "Module 1: Pre/Post Sign Up Page",
     version: "1.0",
+    subNav: [
+      { title: "Pre sign up", children: [{ label: "Version 1", pageId: "pre-signup-v1" }] },
+      { title: "Post sign up", children: [{ label: "Version 1", pageId: "post-signup-v1" }] },
+    ],
   },
   {
     id: "2",

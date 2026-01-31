@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Module } from "@/data/modules";
 
@@ -8,32 +7,38 @@ interface ModuleListItemProps {
   module: Module;
   isExpanded: boolean;
   onToggle: () => void;
+  onSelectPage?: (pageId: string) => void;
 }
 
 export function ModuleListItem({
   module,
   isExpanded,
   onToggle,
+  onSelectPage,
 }: ModuleListItemProps) {
   return (
-    <div className="overflow-hidden rounded-lg border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="overflow-hidden border-b border-zinc-200 last:border-b-0 dark:border-zinc-700">
       <button
         type="button"
         onClick={onToggle}
-        className="flex min-h-12 w-full touch-manipulation items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/80 sm:min-h-11 sm:px-5 sm:py-3.5"
+        className="flex min-h-11 w-full min-w-0 touch-manipulation cursor-pointer items-center justify-between gap-2 p-2 rounded-lg text-left transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 sm:min-h-10"
         aria-expanded={isExpanded}
         aria-controls={`module-content-${module.id}`}
         id={`module-trigger-${module.id}`}
       >
-        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100 sm:text-base">
+        <span className="min-w-0 truncate text-sm font-medium text-zinc-900 dark:text-zinc-100 sm:text-base">
           {module.title}
         </span>
-        <span className="shrink-0 text-zinc-500 dark:text-zinc-400">
-          {isExpanded ? (
-            <ChevronUp className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
-          ) : (
-            <ChevronDown className="h-5 w-5 sm:h-[22px] sm:w-[22px]" />
-          )}
+        <span
+          className={`flex h-6 w-6 shrink-0 items-center justify-center text-zinc-500 dark:text-zinc-400`}
+          aria-hidden
+        >
+          <span
+            className={`material-symbols-outlined block text-[22px] text-zinc-500 dark:text-zinc-400 transition-transform duration-200 sm:text-2xl ${isExpanded ? "rotate-180" : ""}`}
+            style={{ transformOrigin: "center" }}
+          >
+            keyboard_arrow_down
+          </span>
         </span>
       </button>
       <AnimatePresence initial={false}>
@@ -48,13 +53,41 @@ export function ModuleListItem({
             transition={{ duration: 0.2, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="border-t border-zinc-200 px-4 py-3 dark:border-zinc-800 sm:px-5 sm:py-4">
-              <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-400 sm:text-base">
-                {module.description}
-              </p>
-              <p className="mt-2 text-xs font-medium text-zinc-500 dark:text-zinc-500 sm:mt-3 sm:text-sm">
-                Version {module.version}
-              </p>
+            <div className="pb-3 pt-0.5 pl-2 sm:pb-4 sm:pt-1">
+              {module.subNav ? (
+                <ul className="flex flex-col gap-1" role="list">
+                  {module.subNav.map((item) => (
+                    <li key={item.title}>
+                      <span className="cursor-pointer text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400 sm:text-sm">
+                        {item.title}
+                      </span>
+                      <ul className="mt-1 flex flex-col gap-0.5 pl-2 sm:pl-3" role="list">
+                        {item.children.map((child) => (
+                          <li key={child.label}>
+                            {child.pageId && onSelectPage ? (
+                              <button
+                                type="button"
+                                onClick={() => onSelectPage(child.pageId!)}
+                                className="cursor-pointer text-left text-sm text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 sm:text-base"
+                              >
+                                {child.label}
+                              </button>
+                            ) : (
+                              <span className="cursor-pointer text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">
+                                {child.label}
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-500 sm:text-sm">
+                  Version {module.version}
+                </p>
+              )}
             </div>
           </motion.div>
         )}
