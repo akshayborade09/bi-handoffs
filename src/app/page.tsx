@@ -47,7 +47,17 @@ export default function Home() {
         tabIndex={-1}
       >
         {selectedPageId === "pre-signup-v1" && <PreSignUpV1 />}
+        {selectedPageId === "pre-signup-v2" && (
+          <div className="flex h-full items-center justify-center">
+            <h2 className="text-xl text-zinc-500">Pre-Sign Up Version 2 Coming Soon</h2>
+          </div>
+        )}
         {selectedPageId === "post-signup-v1" && <PostSignUpV1 />}
+        {selectedPageId === "post-signup-v2" && (
+          <div className="flex h-full items-center justify-center">
+            <h2 className="text-xl text-zinc-500">Post-Sign Up Version 2 Coming Soon</h2>
+          </div>
+        )}
         {!selectedPageId && (
           <motion.div
             initial={{ opacity: 0 }}
