@@ -15,7 +15,7 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
   const shareUrl = typeof window !== "undefined" 
-    ? `${window.location.origin}/${pageId}` 
+    ? `${window.location.origin}/${pageId}?share=true` 
     : "";
 
   useEffect(() => {
@@ -38,13 +38,13 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop/Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[500] bg-black/50 backdrop-blur-sm"
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-[500] bg-black/60 backdrop-blur-md"
             onClick={onClose}
           />
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { LeftDock } from "@/components/LeftDock";
@@ -28,7 +28,9 @@ const VALID_PAGE_IDS = modules.flatMap(
 function PageContent() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const pageId = params.pageId as string;
+  const isShareView = searchParams.get("share") === "true";
   const { data: session, status } = useSession();
   const [isDockExpanded, setIsDockExpanded] = useState(() => {
     if (typeof window !== "undefined") {
@@ -84,8 +86,8 @@ function PageContent() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mode, setMode]);
 
-  // Show loading spinner while checking auth
-  if (status === "loading") {
+  // Show loading spinner while checking auth (skip auth check in share view)
+  if (!isShareView && status === "loading") {
     return (
       <div className="flex min-h-screen min-h-dvh items-center justify-center bg-zinc-50 dark:bg-zinc-950 md:min-h-screen">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 dark:border-zinc-600 dark:border-t-zinc-100" />
@@ -93,8 +95,8 @@ function PageContent() {
     );
   }
 
-  // Redirect to home if not authenticated
-  if (status === "unauthenticated") {
+  // Redirect to home if not authenticated (skip in share view)
+  if (!isShareView && status === "unauthenticated") {
     router.replace("/");
     return null;
   }
@@ -106,6 +108,22 @@ function PageContent() {
     return null; // Will redirect via useEffect above
   }
 
+  // Share view - just show the page without interface
+  if (isShareView) {
+    return (
+      <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
+        <motion.main
+          className="relative z-10 flex min-h-0 flex-1 flex-col overflow-auto"
+          role="main"
+          tabIndex={-1}
+        >
+          <PageComponent />
+        </motion.main>
+      </div>
+    );
+  }
+
+  // Regular view with dock and comments
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
       <LeftDock
@@ -146,7 +164,15 @@ function PageContent() {
 export default function Page() {
   return (
     <CommentProvider>
-      <PageContent />
+      <Suspense
+        fallback={
+          <div className="flex min-h-screen min-h-dvh items-center justify-center bg-zinc-50 dark:bg-zinc-950 md:min-h-screen">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 dark:border-zinc-600 dark:border-t-zinc-100" />
+          </div>
+        }
+      >
+        <PageContent />
+      </Suspense>
     </CommentProvider>
   );
 }
