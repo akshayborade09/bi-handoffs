@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { LeftDock } from "@/components/LeftDock";
 import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
+import { PreSignUpV2 } from "@/components/pages/PreSignUpV2";
 import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
 import { CommentProvider, useComments } from "@/contexts/CommentContext";
 import { CommentOverlay } from "@/components/CommentOverlay";
@@ -15,6 +16,7 @@ import { modules } from "@/data/modules";
 // Map of valid pageIds to their components
 const PAGE_COMPONENTS: Record<string, React.ComponentType> = {
   "pre-signup-v1": PreSignUpV1,
+  "pre-signup-v2": PreSignUpV2,
   "post-signup-v1": PostSignUpV1,
 };
 
