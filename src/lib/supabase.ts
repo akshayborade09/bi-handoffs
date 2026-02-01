@@ -1,6 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "@/types/database";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
@@ -24,7 +23,7 @@ if (!supabaseAnonKey) {
  * and authorization in your application code.
  */
 export const supabaseAdmin = supabaseUrl && supabaseServiceKey
-  ? createClient<Database>(supabaseUrl, supabaseServiceKey, {
+  ? createClient(supabaseUrl, supabaseServiceKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
@@ -39,7 +38,7 @@ export const supabaseAdmin = supabaseUrl && supabaseServiceKey
  */
 export const supabaseClient =
   typeof window !== "undefined" && supabaseUrl && supabaseAnonKey
-    ? createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    ? createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
           autoRefreshToken: true,
           persistSession: true,
@@ -52,10 +51,10 @@ export const supabaseClient =
  * Use this in API routes when you want RLS policies to be enforced.
  * You'll need to set the user's JWT token for authenticated requests.
  */
-export function createServerSupabaseClient(): SupabaseClient<Database> | null {
+export function createServerSupabaseClient(): SupabaseClient | null {
   if (!supabaseUrl || !supabaseAnonKey) return null;
   
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  return createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
