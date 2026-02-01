@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
+import type { CommentUpdate } from "@/types/database";
 
 // PATCH /api/comments/:id
 export async function PATCH(
@@ -43,7 +44,7 @@ export async function PATCH(
     }
 
     // Build updates object
-    const updates: any = {
+    const updates: CommentUpdate = {
       updated_at: new Date().toISOString(),
     };
 
