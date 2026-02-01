@@ -116,9 +116,14 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
           <div className="flex-1 overflow-y-auto p-3">
             <header className="mb-4 sm:mb-5">
               <div className="flex min-h-11 items-center justify-between gap-2 sm:min-h-10 px-2">
-                <h1 className="text-lg font-semibold tracking-tight text-zinc-900 drop-shadow-sm dark:text-zinc-100 sm:text-xl">
-                  Bonds India
-                </h1>
+                <button
+                  type="button"
+                  onClick={() => onSelectPage?.(null as any)}
+                  className="text-lg font-semibold tracking-tight text-zinc-900 drop-shadow-sm dark:text-zinc-100 sm:text-xl transition-opacity hover:opacity-70"
+                  aria-label="Go to home"
+                >
+                  BondsIndiaXDesign
+                </button>
                 <button
                   type="button"
                   onClick={onToggleExpand}

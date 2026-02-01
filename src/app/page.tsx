@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { LeftDock } from "@/components/LeftDock";
+import { Header } from "@/components/Header";
 import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
 import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
 import { CommentProvider, useComments } from "@/contexts/CommentContext";
@@ -36,6 +37,13 @@ function HomeContent() {
       setSelectedPageId(savedPageId);
     }
   }, []);
+
+  // Keep dock open when on homepage
+  useEffect(() => {
+    if (!selectedPageId) {
+      setIsDockExpanded(true);
+    }
+  }, [selectedPageId]);
 
   // Save selected page to localStorage whenever it changes
   useEffect(() => {
@@ -99,6 +107,9 @@ function HomeContent() {
 
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
+      {/* Navigation Header - only on homepage */}
+      {!selectedPageId && <Header />}
+      
       {/* Dot shader background – does not move when dock opens/closes; same in light and dark */}
       {!selectedPageId && (
         <div
