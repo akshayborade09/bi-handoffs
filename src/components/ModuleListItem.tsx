@@ -72,14 +72,14 @@ export function ModuleListItem({
                         {item.children.map((child) => (
                           <li 
                             key={child.label}
-                            className="group/item -mx-1 rounded-lg px-1 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            className="group/item -mx-2 rounded-lg px-2 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800"
                           >
                             {child.pageId && onSelectPage ? (
-                              <div className="flex items-center gap-2 py-1.5">
+                              <div className="flex items-center gap-2 py-1.5 pr-1">
                                 <button
                                   type="button"
                                   onClick={() => onSelectPage(child.pageId!)}
-                                  className="min-w-0 flex-1 cursor-pointer px-2 text-left text-sm text-zinc-800 transition-colors group-hover/item:text-zinc-900 dark:text-zinc-200 dark:group-hover/item:text-zinc-100 sm:text-base"
+                                  className="min-w-0 flex-1 cursor-pointer text-left text-sm text-zinc-800 transition-colors group-hover/item:text-zinc-900 dark:text-zinc-200 dark:group-hover/item:text-zinc-100 sm:text-base"
                                 >
                                   {child.label}
                                 </button>
@@ -92,7 +92,7 @@ export function ModuleListItem({
                                     setShareModalOpen(true);
                                     onCloseDock?.();
                                   }}
-                                  className="mr-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 opacity-0 transition-all group-hover/item:opacity-100 hover:!bg-zinc-300 hover:!text-zinc-900 dark:text-zinc-500 dark:hover:!bg-zinc-700 dark:hover:!text-zinc-100"
+                                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 opacity-0 transition-all group-hover/item:opacity-100 hover:!bg-zinc-300 hover:!text-zinc-900 dark:text-zinc-500 dark:hover:!bg-zinc-700 dark:hover:!text-zinc-100"
                                   aria-label="Share link"
                                   title="Share link"
                                 >
@@ -105,7 +105,7 @@ export function ModuleListItem({
                                 </button>
                               </div>
                             ) : (
-                              <span className="block cursor-pointer px-2 py-1.5 text-sm text-zinc-800 dark:text-zinc-200 sm:text-base">
+                              <span className="block cursor-pointer py-1.5 text-sm text-zinc-800 dark:text-zinc-200 sm:text-base">
                                 {child.label}
                               </span>
                             )}
