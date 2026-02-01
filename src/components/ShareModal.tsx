@@ -54,7 +54,7 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed left-1/2 top-1/2 z-[501] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/30 bg-white/90 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-zinc-900/90 sm:w-full"
+            className="fixed left-1/2 top-1/2 z-[501] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/30 bg-white/90 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-zinc-900/90 sm:w-full"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
