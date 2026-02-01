@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { LeftDock, DOCK_WIDTH_EXPANDED, DOCK_INSET } from "@/components/LeftDock";
 import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
+import { PreSignUpV2 } from "@/components/pages/PreSignUpV2";
 import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
 
 const DotScreenShader = dynamic(
@@ -47,16 +48,7 @@ export default function Home() {
         tabIndex={-1}
       >
         {selectedPageId === "pre-signup-v1" && <PreSignUpV1 />}
-        {selectedPageId === "pre-signup-v2" && (
-          <div className="flex flex-1 flex-col items-center justify-center p-8 text-center bg-zinc-50 dark:bg-zinc-950">
-            <h2 className="text-3xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
-              Pre Sign Up V2
-            </h2>
-            <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-              Coming Soon
-            </p>
-          </div>
-        )}
+        {selectedPageId === "pre-signup-v2" && <PreSignUpV2 />}
         {selectedPageId === "post-signup-v1" && <PostSignUpV1 />}
         {!selectedPageId && (
           <motion.div
