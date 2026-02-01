@@ -5,6 +5,13 @@ import { supabaseAdmin } from "@/lib/supabase";
 // GET /api/comments?pageId=home&resolved=false
 export async function GET(request: NextRequest) {
   try {
+    // Require authentication for reading comments
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const pageId = searchParams.get("pageId");
     const resolved = searchParams.get("resolved");
@@ -17,6 +24,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Supabase client not configured" }, { status: 500 });
     }
 
+    // Using supabaseAdmin (service role) but with authentication check above
+    // This bypasses RLS but we've verified the user is authenticated
+    // RLS policies act as an additional safety layer
     let query = supabaseAdmin
       .from("comments")
       .select("*")

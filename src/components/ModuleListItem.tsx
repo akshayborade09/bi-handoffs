@@ -68,7 +68,7 @@ export function ModuleListItem({
                       <span className="cursor-pointer text-xs font-medium uppercase tracking-wide text-zinc-700 drop-shadow-sm dark:text-zinc-300 sm:text-sm">
                         {item.title}
                       </span>
-                      <ul className="mt-1 flex flex-col gap-1 pl-2 sm:pl-3" role="list">
+                      <ul className="mt-1 flex flex-col gap-1 pl-1 sm:pl-1" role="list">
                         {item.children.map((child) => (
                           <li 
                             key={child.label}
@@ -92,7 +92,7 @@ export function ModuleListItem({
                                     setShareModalOpen(true);
                                     onCloseDock?.();
                                   }}
-                                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 opacity-0 transition-all group-hover/item:opacity-100 hover:!bg-zinc-300 hover:!text-zinc-900 dark:text-zinc-500 dark:hover:!bg-zinc-700 dark:hover:!text-zinc-100"
+                                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 opacity-0 transition-all group-hover/item:opacity-100 hover:!bg-zinc-200 hover:!text-zinc-900 dark:text-zinc-500 dark:hover:!bg-zinc-700 dark:hover:!text-zinc-100"
                                   aria-label="Share link"
                                   title="Share link"
                                 >

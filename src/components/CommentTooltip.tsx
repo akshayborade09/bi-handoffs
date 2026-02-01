@@ -142,7 +142,7 @@ export function CommentTooltip({
                 onChange={(e) => setContent(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Add a comment..."
-                className="w-full resize-none rounded-md border border-zinc-100 bg-zinc-50 px-3 py-2 pr-12 text-sm text-zinc-900 placeholder-zinc-400 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
+                className="w-full resize-none rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 pr-12 text-sm text-zinc-900 placeholder-zinc-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-700 dark:text-zinc-100 dark:placeholder-zinc-500"
                 rows={3}
               />
               <button

@@ -27,6 +27,22 @@ export async function PATCH(
       return NextResponse.json({ error: "Comment ID is required" }, { status: 400 });
     }
 
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: "Supabase client not configured" }, { status: 500 });
+    }
+
+    // Verify comment exists before updating
+    const { data: existingComment, error: fetchError } = await supabaseAdmin
+      .from("comments")
+      .select("*")
+      .eq("id", commentId)
+      .single();
+
+    if (fetchError || !existingComment) {
+      return NextResponse.json({ error: "Comment not found" }, { status: 404 });
+    }
+
+    // Build updates object
     const updates: any = {
       updated_at: new Date().toISOString(),
     };
@@ -58,9 +74,12 @@ export async function PATCH(
       updates.position_y = Math.round(position_y);
     }
 
-    if (!supabaseAdmin) {
-      return NextResponse.json({ error: "Supabase client not configured" }, { status: 500 });
-    }
+    // Using supabaseAdmin (service role) but with authentication check above
+    // This allows collaborative editing where any authenticated user can update comments
+    // If you want to restrict updates to comment owners only, add:
+    // if (existingComment.user_id !== session.user.id) {
+    //   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // }
 
     const { data, error } = await supabaseAdmin
       .from("comments")
@@ -77,6 +96,70 @@ export async function PATCH(
     return NextResponse.json({ comment: data });
   } catch (error) {
     console.error("Error in PATCH /api/comments/:id:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+// DELETE /api/comments/:id
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> | { id: string } }
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Handle both old and new Next.js param formats
+    const resolvedParams = params instanceof Promise ? await params : params;
+    const commentId = resolvedParams.id;
+
+    if (!commentId) {
+      return NextResponse.json({ error: "Comment ID is required" }, { status: 400 });
+    }
+
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: "Supabase client not configured" }, { status: 500 });
+    }
+
+    // Verify comment exists and check ownership
+    const { data: existingComment, error: fetchError } = await supabaseAdmin
+      .from("comments")
+      .select("*")
+      .eq("id", commentId)
+      .single();
+
+    if (fetchError || !existingComment) {
+      return NextResponse.json({ error: "Comment not found" }, { status: 404 });
+    }
+
+    // Only allow deleting own comments
+    // Remove this check if you want to allow anyone to delete any comment
+    if (existingComment.user_id !== session.user.id) {
+      return NextResponse.json(
+        { error: "Forbidden: You can only delete your own comments" },
+        { status: 403 }
+      );
+    }
+
+    const { error } = await supabaseAdmin
+      .from("comments")
+      .delete()
+      .eq("id", commentId);
+
+    if (error) {
+      console.error("Error deleting comment:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, message: "Comment deleted" });
+  } catch (error) {
+    console.error("Error in DELETE /api/comments/:id:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
