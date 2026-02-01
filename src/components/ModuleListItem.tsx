@@ -17,24 +17,24 @@ export function ModuleListItem({
   onSelectPage,
 }: ModuleListItemProps) {
   return (
-    <div className="overflow-hidden border-b border-zinc-200 last:border-b-0 dark:border-zinc-700">
+    <div className="overflow-hidden border-b border-white/20 last:border-b-0 dark:border-white/10">
       <button
         type="button"
         onClick={onToggle}
-        className="flex min-h-11 w-full min-w-0 touch-manipulation cursor-pointer items-center justify-between gap-2 p-2 rounded-lg text-left transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 sm:min-h-10"
+        className="flex min-h-11 w-full min-w-0 touch-manipulation cursor-pointer items-center justify-between gap-2 p-2 rounded-lg text-left transition-colors hover:bg-white/20 hover:text-zinc-900 dark:hover:bg-white/10 dark:hover:text-zinc-100 sm:min-h-10"
         aria-expanded={isExpanded}
         aria-controls={`module-content-${module.id}`}
         id={`module-trigger-${module.id}`}
       >
-        <span className="min-w-0 truncate text-sm font-medium text-zinc-900 dark:text-zinc-100 sm:text-base">
+        <span className="min-w-0 truncate text-sm font-medium text-zinc-900 drop-shadow-sm dark:text-zinc-100 sm:text-base">
           {module.title}
         </span>
         <span
-          className={`flex h-6 w-6 shrink-0 items-center justify-center text-zinc-500 dark:text-zinc-400`}
+          className={`flex h-6 w-6 shrink-0 items-center justify-center text-zinc-900 dark:text-zinc-100`}
           aria-hidden
         >
           <span
-            className={`material-symbols-outlined block text-[22px] text-zinc-500 dark:text-zinc-400 transition-transform duration-200 sm:text-2xl ${isExpanded ? "rotate-180" : ""}`}
+            className={`material-symbols-outlined leading-none block text-[22px] text-zinc-900 dark:text-zinc-100 transition-transform duration-200 sm:text-2xl ${isExpanded ? "rotate-180" : ""}`}
             style={{ transformOrigin: "center" }}
           >
             keyboard_arrow_down
@@ -58,7 +58,7 @@ export function ModuleListItem({
                 <ul className="flex flex-col gap-1" role="list">
                   {module.subNav.map((item) => (
                     <li key={item.title}>
-                      <span className="cursor-pointer text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400 sm:text-sm">
+                      <span className="cursor-pointer text-xs font-medium uppercase tracking-wide text-zinc-700 drop-shadow-sm dark:text-zinc-300 sm:text-sm">
                         {item.title}
                       </span>
                       <ul className="mt-1 flex flex-col gap-0.5 pl-2 sm:pl-3" role="list">
@@ -68,12 +68,12 @@ export function ModuleListItem({
                               <button
                                 type="button"
                                 onClick={() => onSelectPage(child.pageId!)}
-                                className="cursor-pointer text-left text-sm text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 sm:text-base"
+                                className="cursor-pointer text-left text-sm text-zinc-800 drop-shadow-sm transition-colors hover:text-zinc-900 dark:text-zinc-200 dark:hover:text-zinc-100 sm:text-base"
                               >
                                 {child.label}
                               </button>
                             ) : (
-                              <span className="cursor-pointer text-sm text-zinc-600 dark:text-zinc-400 sm:text-base">
+                              <span className="cursor-pointer text-sm text-zinc-800 drop-shadow-sm dark:text-zinc-200 sm:text-base">
                                 {child.label}
                               </span>
                             )}

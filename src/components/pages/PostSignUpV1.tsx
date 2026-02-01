@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 
 const FAQ_ITEMS = [
   {
@@ -27,6 +28,15 @@ const FAQ_ITEMS = [
 
 export function PostSignUpV1() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const { data: session } = useSession();
+  
+  const userName = session?.user?.name || "User";
+  const userInitials = userName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
     <div className="min-h-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
@@ -70,12 +80,15 @@ export function PostSignUpV1() {
             >
               🛒
             </a>
-            <div
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-zinc-900 text-sm font-semibold text-white dark:bg-zinc-100 dark:text-zinc-900"
-              aria-hidden
+            <button
+              type="button"
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-zinc-900 text-sm font-semibold text-white transition-opacity hover:opacity-80 dark:bg-zinc-100 dark:text-zinc-900"
+              aria-label="Sign out"
+              title="Click to sign out"
             >
-              AK
-            </div>
+              {userInitials}
+            </button>
           </div>
         </div>
       </nav>
@@ -90,7 +103,7 @@ export function PostSignUpV1() {
                 <span>✓</span> Account created successfully
               </div>
               <h1 className="mb-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 md:text-3xl">
-                Welcome, Akshay
+                Welcome, {userName}
               </h1>
               <p className="mb-4 text-lg text-zinc-600 dark:text-zinc-400">
                 Your journey to predictable income starts here.

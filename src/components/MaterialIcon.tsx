@@ -17,7 +17,7 @@ export function MaterialIcon({
 }: MaterialIconProps) {
   return (
     <span
-      className={`material-symbols-outlined select-none ${className}`}
+      className={`material-symbols-outlined leading-none select-none ${className}`}
       style={{
         fontSize: size,
         width: size,

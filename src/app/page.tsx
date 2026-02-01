@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { LeftDock, DOCK_WIDTH_EXPANDED, DOCK_INSET } from "@/components/LeftDock";
+import { useTheme } from "next-themes";
+import { LeftDock } from "@/components/LeftDock";
 import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
 import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
+import { CommentProvider, useComments } from "@/contexts/CommentContext";
+import { CommentOverlay } from "@/components/CommentOverlay";
 
 const DotScreenShader = dynamic(
   () =>
@@ -13,10 +16,86 @@ const DotScreenShader = dynamic(
   { ssr: false }
 );
 
-export default function Home() {
-  const [isDockExpanded, setIsDockExpanded] = useState(true);
+function HomeContent() {
+  const [isDockExpanded, setIsDockExpanded] = useState(() => {
+    // Restore dock state from localStorage
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("isDockExpanded");
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
-  const mainMarginLeft = isDockExpanded ? DOCK_INSET + DOCK_WIDTH_EXPANDED : 0;
+  const { mode, setMode, setCurrentPageId } = useComments();
+  const { resolvedTheme, setTheme } = useTheme();
+
+  // Restore selected page from localStorage on mount
+  useEffect(() => {
+    const savedPageId = localStorage.getItem("selectedPageId");
+    if (savedPageId) {
+      setSelectedPageId(savedPageId);
+    }
+  }, []);
+
+  // Save selected page to localStorage whenever it changes
+  useEffect(() => {
+    if (selectedPageId) {
+      localStorage.setItem("selectedPageId", selectedPageId);
+    } else {
+      localStorage.removeItem("selectedPageId");
+    }
+  }, [selectedPageId]);
+
+  // Save dock state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("isDockExpanded", JSON.stringify(isDockExpanded));
+  }, [isDockExpanded]);
+
+  // Update current page ID in context when it changes
+  useEffect(() => {
+    setCurrentPageId(selectedPageId || "home");
+  }, [selectedPageId, setCurrentPageId]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // "/" key to toggle dock
+      if (e.key === "/" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        // Ignore if typing in an input or textarea
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          return;
+        }
+        e.preventDefault();
+        setIsDockExpanded((prev) => !prev);
+      }
+      
+      // "Shift + C" to toggle mode
+      if (e.key === "C" && e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        // Ignore if typing in an input or textarea
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          return;
+        }
+        e.preventDefault();
+        setMode((prev) => prev === "creator" ? "commenter" : "creator");
+      }
+      
+      // "Shift + D" to toggle theme
+      if (e.key === "D" && e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        // Ignore if typing in an input or textarea
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          return;
+        }
+        e.preventDefault();
+        setTheme(resolvedTheme === "dark" ? "light" : "dark");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setMode, resolvedTheme, setTheme]);
 
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
@@ -32,20 +111,29 @@ export default function Home() {
       )}
       <LeftDock
         isExpanded={isDockExpanded}
-        onToggleExpand={() => setIsDockExpanded((prev) => !prev)}
+        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
         onSelectPage={(pageId) => {
           setSelectedPageId(pageId);
           setIsDockExpanded(false);
         }}
+        mode={mode}
+        onModeChange={setMode}
       />
+      
       <motion.main
         className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-auto ${!selectedPageId ? "pointer-events-none" : ""}`}
-        animate={{ marginLeft: mainMarginLeft }}
-        transition={{ type: "tween", duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
-        onClick={selectedPageId ? () => isDockExpanded && setIsDockExpanded(false) : undefined}
+        onClick={selectedPageId && mode !== "commenter" ? () => isDockExpanded && setIsDockExpanded(false) : undefined}
         role="main"
         tabIndex={-1}
       >
+        {/* Comment overlay - only visible in commenter mode */}
+        <CommentOverlay
+          isActive={mode === "commenter"}
+          pageId={selectedPageId || "home"}
+          isDockExpanded={isDockExpanded}
+          onCloseDock={() => setIsDockExpanded(false)}
+        />
+        
         {selectedPageId === "pre-signup-v1" && <PreSignUpV1 />}
         {selectedPageId === "post-signup-v1" && <PostSignUpV1 />}
         {!selectedPageId && (
@@ -64,5 +152,13 @@ export default function Home() {
         )}
       </motion.main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <CommentProvider>
+      <HomeContent />
+    </CommentProvider>
   );
 }
