@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     // Using supabaseAdmin (service role) but with authentication check above
     // This bypasses RLS but we've verified the user is authenticated
     // RLS policies act as an additional safety layer
-    let query = supabaseAdmin
+    let query = supabaseAdmin!
       .from("comments")
       .select("*")
       .eq("page_id", pageId)
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Supabase client not configured" }, { status: 500 });
     }
 
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin!
       .from("comments")
       .insert({
         user_id: session.user.id,

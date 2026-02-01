@@ -33,7 +33,7 @@ export async function PATCH(
     }
 
     // Verify comment exists before updating
-    const { data: existingComment, error: fetchError } = await supabaseAdmin
+    const { data: existingComment, error: fetchError } = await supabaseAdmin!
       .from("comments")
       .select("*")
       .eq("id", commentId)
@@ -82,7 +82,7 @@ export async function PATCH(
     //   return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     // }
 
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin!
       .from("comments")
       .update(updates as any)
       .eq("id", commentId)
@@ -129,7 +129,7 @@ export async function DELETE(
     }
 
     // Verify comment exists and check ownership
-    const { data: existingComment, error: fetchError } = await supabaseAdmin
+    const { data: existingComment, error: fetchError } = await supabaseAdmin!
       .from("comments")
       .select("*")
       .eq("id", commentId)
@@ -148,7 +148,7 @@ export async function DELETE(
       );
     }
 
-    const { error } = await supabaseAdmin
+    const { error } = await supabaseAdmin!
       .from("comments")
       .delete()
       .eq("id", commentId);
