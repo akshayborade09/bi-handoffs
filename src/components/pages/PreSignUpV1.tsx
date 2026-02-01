@@ -7,7 +7,7 @@ export function PreSignUpV1() {
       <nav className="sticky top-0 z-[100] border-b border-zinc-200 bg-white px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900 sm:px-8">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between">
           <div className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-            Bonds India
+            BondsIndia
           </div>
           <div className="hidden items-center gap-6 md:flex sm:gap-8">
             <a
@@ -355,7 +355,7 @@ export function PreSignUpV1() {
           <div className="mb-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div className="lg:col-span-2">
               <h3 className="mb-4 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-                Bonds India
+                BondsIndia
               </h3>
               <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
                 A SEBI-registered platform for curated bond investments. We help investors access fixed income opportunities with clarity and confidence.
@@ -406,11 +406,11 @@ export function PreSignUpV1() {
           </div>
           <div className="border-t border-zinc-200 pt-8 dark:border-zinc-700">
             <p className="mb-4 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
-              <strong>Risk Disclosure:</strong> Investments in bonds are subject to market risks. Returns are not guaranteed and past performance does not indicate future results. Please read all scheme-related documents carefully before investing. Bonds India is a SEBI-registered intermediary.
+              <strong>Risk Disclosure:</strong> Investments in bonds are subject to market risks. Returns are not guaranteed and past performance does not indicate future results. Please read all scheme-related documents carefully before investing. BondsIndia is a SEBI-registered intermediary.
             </p>
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
               <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                © 2025 Bonds India. All rights reserved.
+                © 2025 BondsIndia. All rights reserved.
               </span>
               <div className="flex gap-6">
                 <a href="#" className="text-sm text-zinc-600 dark:text-zinc-400">Privacy Policy</a>

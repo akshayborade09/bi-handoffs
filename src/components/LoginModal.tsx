@@ -22,7 +22,7 @@ export function LoginModal() {
         {/* Branding */}
         <div className="mb-8 text-center">
           <h1 className="mb-2 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-            Bonds India
+            BondsIndia
           </h1>
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
             Sign in to access design handoffs

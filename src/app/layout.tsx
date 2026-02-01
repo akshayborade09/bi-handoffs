@@ -18,8 +18,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Bonds India Handoffs",
-  description: "Bonds India Handoffs app",
+  title: "BondsIndia Handoffs",
+  description: "BondsIndia Handoffs app",
 };
 
 export default function RootLayout({

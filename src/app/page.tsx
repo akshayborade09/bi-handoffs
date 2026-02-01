@@ -129,7 +129,7 @@ function HomeContent() {
             className="w-full max-w-md text-center"
           >
             <h1 className="mb-12 text-center text-3xl font-light tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-4xl">
-              Bonds India x Design
+              BondsIndia x Design
             </h1>
             
             {/* Login card */}
@@ -228,7 +228,7 @@ function HomeContent() {
         >
           <div className="absolute inset-0 flex items-center justify-center px-4 py-6 sm:px-6 sm:py-8">
             <h1 className="text-center text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
-              Bonds India x Design
+              BondsIndia x Design
             </h1>
           </div>
         </motion.div>
