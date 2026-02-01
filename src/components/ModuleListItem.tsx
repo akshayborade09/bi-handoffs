@@ -10,6 +10,7 @@ interface ModuleListItemProps {
   isExpanded: boolean;
   onToggle: () => void;
   onSelectPage?: (pageId: string) => void;
+  onCloseDock?: () => void;
 }
 
 export function ModuleListItem({
@@ -17,6 +18,7 @@ export function ModuleListItem({
   isExpanded,
   onToggle,
   onSelectPage,
+  onCloseDock,
 }: ModuleListItemProps) {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [sharePageId, setSharePageId] = useState<string>("");
@@ -92,6 +94,7 @@ export function ModuleListItem({
                                       setSharePageId(child.pageId!);
                                       setSharePageName(`${item.title} - ${child.label}`);
                                       setShareModalOpen(true);
+                                      onCloseDock?.();
                                     }}
                                     className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-600 transition-colors hover:bg-zinc-200/50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700/50 dark:hover:text-zinc-100"
                                     aria-label="Share link"

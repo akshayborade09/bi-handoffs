@@ -144,6 +144,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
                     isExpanded={expandedModuleId === module.id}
                     onToggle={() => handleToggleModule(module.id)}
                     onSelectPage={onSelectPage}
+                    onCloseDock={() => onToggleExpand()}
                   />
                 </li>
               ))}

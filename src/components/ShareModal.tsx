@@ -36,7 +36,7 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[300] bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-[500] bg-black/50 backdrop-blur-sm"
             onClick={onClose}
           />
 
@@ -46,7 +46,7 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed left-1/2 top-1/2 z-[301] w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/30 bg-white/90 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-zinc-900/90"
+            className="fixed left-1/2 top-1/2 z-[501] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/30 bg-white/90 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-zinc-900/90 sm:w-full"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -66,17 +66,17 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
 
             {/* Link Field */}
             <div className="mb-3">
-              <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-800">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <input
                   type="text"
                   value={shareUrl}
                   readOnly
-                  className="min-w-0 flex-1 bg-transparent text-sm text-zinc-700 outline-none dark:text-zinc-300"
+                  className="min-w-0 flex-1 rounded-lg border border-zinc-200 bg-white p-3 text-sm text-zinc-700 outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
                 />
                 <button
                   type="button"
                   onClick={handleCopy}
-                  className="flex items-center gap-2 rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                  className="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 sm:px-4 sm:py-2"
                 >
                   <span className="material-symbols-outlined text-[18px]">
                     {copied ? "check" : "content_copy"}
