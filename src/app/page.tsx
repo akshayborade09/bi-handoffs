@@ -152,7 +152,7 @@ function HomeContent() {
             </h1>
             
             {/* Login card */}
-            <div className="rounded-2xl border border-white/30 bg-white/60 p-8 backdrop-blur-xl dark:border-white/15 dark:bg-zinc-900/40 sm:p-10">
+            <div className="rounded-2xl border border-gray-100 bg-white/60 p-8 backdrop-blur-xl dark:border-white/15 dark:bg-zinc-900/40 sm:p-10">
               <p className="mb-8 text-sm text-zinc-600 dark:text-zinc-400">
                 Sign in to access design handoffs
               </p>
