@@ -9,6 +9,7 @@ import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
 import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
 import { CommentProvider, useComments } from "@/contexts/CommentContext";
 import { CommentOverlay } from "@/components/CommentOverlay";
+import { FloatingThemeToggle } from "@/components/FloatingThemeToggle";
 import { modules } from "@/data/modules";
 
 // Map of valid pageIds to their components
@@ -119,6 +120,9 @@ function PageContent() {
         >
           <PageComponent />
         </motion.main>
+        
+        {/* Floating theme toggle for shared view */}
+        <FloatingThemeToggle />
       </div>
     );
   }
