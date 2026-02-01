@@ -72,14 +72,14 @@ export function ModuleListItem({
                         {item.children.map((child) => (
                           <li 
                             key={child.label}
-                            className="group/item"
+                            className="group/item rounded-md transition-colors hover:bg-white/20 dark:hover:bg-white/10"
                           >
                             {child.pageId && onSelectPage ? (
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 px-2 py-1.5">
                                 <button
                                   type="button"
                                   onClick={() => onSelectPage(child.pageId!)}
-                                  className="min-w-0 flex-1 cursor-pointer text-left text-sm text-zinc-800 drop-shadow-sm transition-colors hover:text-zinc-900 dark:text-zinc-200 dark:hover:text-zinc-100 sm:text-base"
+                                  className="min-w-0 flex-1 cursor-pointer text-left text-sm text-zinc-800 drop-shadow-sm transition-colors group-hover/item:text-zinc-900 dark:text-zinc-200 dark:group-hover/item:text-zinc-100 sm:text-base"
                                 >
                                   {child.label}
                                 </button>
@@ -92,7 +92,7 @@ export function ModuleListItem({
                                     setShareModalOpen(true);
                                     onCloseDock?.();
                                   }}
-                                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-600 opacity-0 transition-all group-hover/item:opacity-100 hover:bg-zinc-300 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
+                                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-600 opacity-0 transition-all group-hover/item:opacity-100 hover:!bg-zinc-300 hover:text-zinc-900 dark:text-zinc-400 dark:hover:!bg-zinc-700 dark:hover:text-zinc-100"
                                   aria-label="Share link"
                                   title="Share link"
                                 >
@@ -105,7 +105,7 @@ export function ModuleListItem({
                                 </button>
                               </div>
                             ) : (
-                              <span className="cursor-pointer text-sm text-zinc-800 drop-shadow-sm dark:text-zinc-200 sm:text-base">
+                              <span className="cursor-pointer px-2 py-1.5 text-sm text-zinc-800 drop-shadow-sm dark:text-zinc-200 sm:text-base">
                                 {child.label}
                               </span>
                             )}
