@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ShareModalProps {
@@ -12,9 +13,14 @@ interface ShareModalProps {
 
 export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProps) {
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const shareUrl = typeof window !== "undefined" 
     ? `${window.location.origin}/${pageId}` 
     : "";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleCopy = async () => {
     try {
@@ -26,7 +32,9 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
     }
   };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -93,6 +101,7 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
