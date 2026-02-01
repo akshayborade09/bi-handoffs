@@ -54,7 +54,7 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed left-1/2 top-1/2 z-[501] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/30 bg-white/90 p-6 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-zinc-900/90 sm:w-full"
+            className="fixed left-1/2 top-1/2 z-[501] w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/30 bg-white/90 p-4 shadow-2xl backdrop-blur-xl dark:border-white/20 dark:bg-zinc-900/90 sm:w-full"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -65,10 +65,10 @@ export function ShareModal({ isOpen, onClose, pageId, pageName }: ShareModalProp
               <button
                 type="button"
                 onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-zinc-500 transition-all hover:scale-110 hover:bg-zinc-200 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
                 aria-label="Close"
               >
-                <span className="material-symbols-outlined text-[20px]">close</span>
+                <span className="material-symbols-outlined text-[22px]">close</span>
               </button>
             </div>
 
