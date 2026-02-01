@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { LeftDock } from "@/components/LeftDock";
 import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
 import { PreSignUpV2 } from "@/components/pages/PreSignUpV2";
@@ -43,6 +44,7 @@ function PageContent() {
     return false;
   });
   const { mode, setMode, setCurrentPageId } = useComments();
+  const { resolvedTheme, setTheme } = useTheme();
 
   // Validate pageId - redirect to home if invalid
   useEffect(() => {
@@ -83,11 +85,21 @@ function PageContent() {
         e.preventDefault();
         setMode(mode === "creator" ? "commenter" : "creator");
       }
+
+      // "Shift + D" to toggle theme
+      if (e.key === "D" && e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          return;
+        }
+        e.preventDefault();
+        setTheme(resolvedTheme === "dark" ? "light" : "dark");
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [mode, setMode]);
+  }, [mode, setMode, resolvedTheme, setTheme]);
 
   // Show loading spinner while checking auth (skip auth check in share view)
   if (!isShareView && status === "loading") {
