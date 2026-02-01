@@ -1,0 +1,152 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { LeftDock } from "@/components/LeftDock";
+import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
+import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
+import { CommentProvider, useComments } from "@/contexts/CommentContext";
+import { CommentOverlay } from "@/components/CommentOverlay";
+import { modules } from "@/data/modules";
+
+// Map of valid pageIds to their components
+const PAGE_COMPONENTS: Record<string, React.ComponentType> = {
+  "pre-signup-v1": PreSignUpV1,
+  "post-signup-v1": PostSignUpV1,
+};
+
+// Get all valid pageIds from modules
+const VALID_PAGE_IDS = modules.flatMap(
+  (module) =>
+    module.subNav?.flatMap((subNav) =>
+      subNav.children.filter((child) => child.pageId).map((child) => child.pageId!)
+    ) || []
+);
+
+function PageContent() {
+  const params = useParams();
+  const router = useRouter();
+  const pageId = params.pageId as string;
+  const { data: session, status } = useSession();
+  const [isDockExpanded, setIsDockExpanded] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("isDockExpanded");
+      return saved !== null ? JSON.parse(saved) : false; // Default to collapsed on page view
+    }
+    return false;
+  });
+  const { mode, setMode, setCurrentPageId } = useComments();
+
+  // Validate pageId - redirect to home if invalid
+  useEffect(() => {
+    if (!VALID_PAGE_IDS.includes(pageId)) {
+      router.replace("/");
+    }
+  }, [pageId, router]);
+
+  // Update current page ID in context
+  useEffect(() => {
+    setCurrentPageId(pageId);
+  }, [pageId, setCurrentPageId]);
+
+  // Save dock state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("isDockExpanded", JSON.stringify(isDockExpanded));
+  }, [isDockExpanded]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // "/" key to toggle dock
+      if (e.key === "/" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          return;
+        }
+        e.preventDefault();
+        setIsDockExpanded((prev: boolean) => !prev);
+      }
+
+      // "Shift + C" to toggle mode
+      if (e.key === "C" && e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          return;
+        }
+        e.preventDefault();
+        setMode(mode === "creator" ? "commenter" : "creator");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mode, setMode]);
+
+  // Show loading spinner while checking auth
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-screen min-h-dvh items-center justify-center bg-zinc-50 dark:bg-zinc-950 md:min-h-screen">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-zinc-300 border-t-zinc-900 dark:border-zinc-600 dark:border-t-zinc-100" />
+      </div>
+    );
+  }
+
+  // Redirect to home if not authenticated
+  if (status === "unauthenticated") {
+    router.replace("/");
+    return null;
+  }
+
+  // Get the component for this page
+  const PageComponent = PAGE_COMPONENTS[pageId];
+
+  if (!PageComponent) {
+    return null; // Will redirect via useEffect above
+  }
+
+  return (
+    <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
+      <LeftDock
+        isExpanded={isDockExpanded}
+        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
+        onSelectPage={(selectedPageId) => {
+          if (selectedPageId) {
+            router.push(`/${selectedPageId}`);
+          } else {
+            router.push("/");
+          }
+          setIsDockExpanded(false);
+        }}
+        mode={mode}
+        onModeChange={setMode}
+      />
+
+      <motion.main
+        className="relative z-10 flex min-h-0 flex-1 flex-col overflow-auto"
+        onClick={mode !== "commenter" ? () => isDockExpanded && setIsDockExpanded(false) : undefined}
+        role="main"
+        tabIndex={-1}
+      >
+        {/* Comment overlay - only visible in commenter mode */}
+        <CommentOverlay
+          isActive={mode === "commenter"}
+          pageId={pageId}
+          isDockExpanded={isDockExpanded}
+          onCloseDock={() => setIsDockExpanded(false)}
+        />
+
+        <PageComponent />
+      </motion.main>
+    </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <CommentProvider>
+      <PageContent />
+    </CommentProvider>
+  );
+}

@@ -5,12 +5,10 @@ import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useTheme } from "next-themes";
 import { useSession, signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { LeftDock } from "@/components/LeftDock";
 import { Header } from "@/components/Header";
-import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
-import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
 import { CommentProvider, useComments } from "@/contexts/CommentContext";
-import { CommentOverlay } from "@/components/CommentOverlay";
 
 const DotScreenShader = dynamic(
   () =>
@@ -19,6 +17,7 @@ const DotScreenShader = dynamic(
 );
 
 function HomeContent() {
+  const router = useRouter();
   const { data: session, status } = useSession();
   const [isDockExpanded, setIsDockExpanded] = useState(() => {
     // Restore dock state from localStorage
@@ -28,25 +27,21 @@ function HomeContent() {
     }
     return true;
   });
-  const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const { mode, setMode, setCurrentPageId } = useComments();
   const { resolvedTheme, setTheme } = useTheme();
   const [isSigningIn, setIsSigningIn] = useState(false);
 
-  // Restore selected page from localStorage on mount
+  // Set current page to home
   useEffect(() => {
-    const savedPageId = localStorage.getItem("selectedPageId");
-    if (savedPageId) {
-      setSelectedPageId(savedPageId);
-    }
-  }, []);
+    setCurrentPageId("home");
+  }, [setCurrentPageId]);
 
   // Keep dock open when on homepage (only if authenticated)
   useEffect(() => {
-    if (!selectedPageId && status === "authenticated") {
+    if (status === "authenticated") {
       setIsDockExpanded(true);
     }
-  }, [selectedPageId, status]);
+  }, [status]);
 
   const handleGoogleSignIn = async () => {
     setIsSigningIn(true);
@@ -58,24 +53,10 @@ function HomeContent() {
     }
   };
 
-  // Save selected page to localStorage whenever it changes
-  useEffect(() => {
-    if (selectedPageId) {
-      localStorage.setItem("selectedPageId", selectedPageId);
-    } else {
-      localStorage.removeItem("selectedPageId");
-    }
-  }, [selectedPageId]);
-
   // Save dock state to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("isDockExpanded", JSON.stringify(isDockExpanded));
   }, [isDockExpanded]);
-
-  // Update current page ID in context when it changes
-  useEffect(() => {
-    setCurrentPageId(selectedPageId || "home");
-  }, [selectedPageId, setCurrentPageId]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -209,24 +190,25 @@ function HomeContent() {
   // Authenticated user - show main app with dock
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
-      {/* Navigation Header - only on homepage */}
-      {!selectedPageId && <Header />}
+      {/* Navigation Header */}
+      <Header />
       
       {/* Dot shader background – does not move when dock opens/closes; same in light and dark */}
-      {!selectedPageId && (
-        <div
-          className="fixed inset-0 z-0 cursor-default"
-          onClick={() => isDockExpanded && setIsDockExpanded(false)}
-          aria-hidden
-        >
-          <DotScreenShader />
-        </div>
-      )}
+      <div
+        className="fixed inset-0 z-0 cursor-default"
+        onClick={() => isDockExpanded && setIsDockExpanded(false)}
+        aria-hidden
+      >
+        <DotScreenShader />
+      </div>
+      
       <LeftDock
         isExpanded={isDockExpanded}
         onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
         onSelectPage={(pageId) => {
-          setSelectedPageId(pageId);
+          if (pageId) {
+            router.push(`/${pageId}`);
+          }
           setIsDockExpanded(false);
         }}
         mode={mode}
@@ -234,35 +216,22 @@ function HomeContent() {
       />
       
       <motion.main
-        className={`relative z-10 flex min-h-0 flex-1 flex-col overflow-auto ${!selectedPageId ? "pointer-events-none" : ""}`}
-        onClick={selectedPageId && mode !== "commenter" ? () => isDockExpanded && setIsDockExpanded(false) : undefined}
+        className="relative z-10 flex min-h-0 flex-1 flex-col overflow-auto pointer-events-none"
         role="main"
         tabIndex={-1}
       >
-        {/* Comment overlay - only visible in commenter mode */}
-        <CommentOverlay
-          isActive={mode === "commenter"}
-          pageId={selectedPageId || "home"}
-          isDockExpanded={isDockExpanded}
-          onCloseDock={() => setIsDockExpanded(false)}
-        />
-        
-        {selectedPageId === "pre-signup-v1" && <PreSignUpV1 />}
-        {selectedPageId === "post-signup-v1" && <PostSignUpV1 />}
-        {!selectedPageId && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="relative min-h-dvh min-h-full flex-1 pointer-events-none"
-          >
-            <div className="absolute inset-0 flex items-center justify-center px-4 py-6 sm:px-6 sm:py-8">
-              <h1 className="text-center text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
-                Bonds India x Design
-              </h1>
-            </div>
-          </motion.div>
-        )}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="relative min-h-dvh min-h-full flex-1 pointer-events-none"
+        >
+          <div className="absolute inset-0 flex items-center justify-center px-4 py-6 sm:px-6 sm:py-8">
+            <h1 className="text-center text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-100">
+              Bonds India x Design
+            </h1>
+          </div>
+        </motion.div>
       </motion.main>
     </div>
   );
