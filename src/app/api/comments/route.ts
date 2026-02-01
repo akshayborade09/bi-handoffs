@@ -13,6 +13,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "pageId is required" }, { status: 400 });
     }
 
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: "Supabase client not configured" }, { status: 500 });
+    }
+
     let query = supabaseAdmin
       .from("comments")
       .select("*")
@@ -58,6 +62,10 @@ export async function POST(request: NextRequest) {
         { error: "Missing required fields: pageId, positionX, positionY, content" },
         { status: 400 }
       );
+    }
+
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: "Supabase client not configured" }, { status: 500 });
     }
 
     const { data, error } = await supabaseAdmin

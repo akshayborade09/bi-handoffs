@@ -58,6 +58,10 @@ export async function PATCH(
       updates.position_y = Math.round(position_y);
     }
 
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: "Supabase client not configured" }, { status: 500 });
+    }
+
     const { data, error } = await supabaseAdmin
       .from("comments")
       .update(updates)

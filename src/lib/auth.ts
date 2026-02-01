@@ -17,6 +17,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async signIn({ user, account }) {
       if (!user.email) return false;
 
+      if (!supabaseAdmin) {
+        console.error("Supabase admin client not configured");
+        return false;
+      }
+
       try {
         // Check if user exists
         const { data: existingUser } = await supabaseAdmin
