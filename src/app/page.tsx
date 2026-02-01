@@ -67,7 +67,7 @@ function HomeContent() {
           return;
         }
         e.preventDefault();
-        setIsDockExpanded((prev) => !prev);
+        setIsDockExpanded((prev: boolean) => !prev);
       }
       
       // "Shift + C" to toggle mode
@@ -78,7 +78,7 @@ function HomeContent() {
           return;
         }
         e.preventDefault();
-        setMode((prev) => prev === "creator" ? "commenter" : "creator");
+        setMode(mode === "creator" ? "commenter" : "creator");
       }
       
       // "Shift + D" to toggle theme
@@ -95,7 +95,7 @@ function HomeContent() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [setMode, resolvedTheme, setTheme]);
+  }, [mode, setMode, resolvedTheme, setTheme]);
 
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
