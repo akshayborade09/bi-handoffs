@@ -68,18 +68,18 @@ export function ModuleListItem({
                       <span className="cursor-pointer text-xs font-medium uppercase tracking-wide text-zinc-700 drop-shadow-sm dark:text-zinc-300 sm:text-sm">
                         {item.title}
                       </span>
-                      <ul className="mt-1 flex flex-col gap-0.5 pl-2 sm:pl-3" role="list">
+                      <ul className="mt-1 flex flex-col gap-1 pl-2 sm:pl-3" role="list">
                         {item.children.map((child) => (
                           <li 
                             key={child.label}
-                            className="group/item rounded-md transition-colors hover:bg-white/20 dark:hover:bg-white/10"
+                            className="group/item -mx-1 rounded-lg px-1 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800"
                           >
                             {child.pageId && onSelectPage ? (
-                              <div className="flex items-center gap-2 px-2 py-1.5">
+                              <div className="flex items-center gap-2 py-1.5">
                                 <button
                                   type="button"
                                   onClick={() => onSelectPage(child.pageId!)}
-                                  className="min-w-0 flex-1 cursor-pointer text-left text-sm text-zinc-800 drop-shadow-sm transition-colors group-hover/item:text-zinc-900 dark:text-zinc-200 dark:group-hover/item:text-zinc-100 sm:text-base"
+                                  className="min-w-0 flex-1 cursor-pointer px-2 text-left text-sm text-zinc-800 transition-colors group-hover/item:text-zinc-900 dark:text-zinc-200 dark:group-hover/item:text-zinc-100 sm:text-base"
                                 >
                                   {child.label}
                                 </button>
@@ -92,7 +92,7 @@ export function ModuleListItem({
                                     setShareModalOpen(true);
                                     onCloseDock?.();
                                   }}
-                                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-600 opacity-0 transition-all group-hover/item:opacity-100 hover:!bg-zinc-300 hover:text-zinc-900 dark:text-zinc-400 dark:hover:!bg-zinc-700 dark:hover:text-zinc-100"
+                                  className="mr-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 opacity-0 transition-all group-hover/item:opacity-100 hover:!bg-zinc-300 hover:!text-zinc-900 dark:text-zinc-500 dark:hover:!bg-zinc-700 dark:hover:!text-zinc-100"
                                   aria-label="Share link"
                                   title="Share link"
                                 >
@@ -105,7 +105,7 @@ export function ModuleListItem({
                                 </button>
                               </div>
                             ) : (
-                              <span className="cursor-pointer px-2 py-1.5 text-sm text-zinc-800 drop-shadow-sm dark:text-zinc-200 sm:text-base">
+                              <span className="block cursor-pointer px-2 py-1.5 text-sm text-zinc-800 dark:text-zinc-200 sm:text-base">
                                 {child.label}
                               </span>
                             )}
