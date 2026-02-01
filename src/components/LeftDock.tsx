@@ -34,8 +34,16 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [showResolvedComments, setShowResolvedComments] = useState(false);
+  const [isMac, setIsMac] = useState(false);
   const { data: session } = useSession();
   const profileRef = useRef<HTMLDivElement>(null);
+
+  // Detect OS on mount
+  useEffect(() => {
+    setIsMac(navigator.platform.toUpperCase().indexOf('MAC') >= 0 || navigator.userAgent.toUpperCase().indexOf('MAC') >= 0);
+  }, []);
+
+  const modKey = isMac ? '⌘' : 'Ctrl';
 
   const handleToggleModule = (id: string) => {
     setExpandedModuleId((prev) => (prev === id ? null : id));
@@ -92,8 +100,9 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
         <motion.button
           type="button"
           onClick={onToggleExpand}
-          className="fixed left-3 top-3 z-[200] flex min-h-10 min-w-10 touch-manipulation cursor-pointer items-center justify-center rounded-xl border border-white/30 bg-white/40 text-zinc-600 shadow-lg backdrop-blur-2xl transition-colors hover:bg-white/50 hover:text-zinc-900 dark:border-white/15 dark:bg-zinc-900/40 dark:text-zinc-400 dark:hover:bg-zinc-900/50 dark:hover:text-zinc-100"
+          className="fixed left-3 top-3 z-[200] flex min-h-10 min-w-10 touch-manipulation cursor-pointer items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-lg transition-colors hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-black dark:text-white dark:hover:bg-zinc-950 dark:hover:text-white"
           aria-label="Expand dock"
+          title="Expand dock (/)"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "tween", duration: 0.2, ease: "easeOut" }}
@@ -129,6 +138,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
                   onClick={onToggleExpand}
                   className="flex min-h-9 min-w-9 touch-manipulation shrink-0 items-center justify-center rounded-md text-zinc-900 transition-colors hover:bg-white/20 hover:text-zinc-900 dark:text-zinc-100 dark:hover:bg-white/10 dark:hover:text-zinc-100"
                   aria-label="Collapse dock"
+                  title="Collapse dock (/)"
                 >
                   <span className="material-symbols-outlined leading-none select-none" aria-hidden>
                     dock_to_left
@@ -178,7 +188,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
                       : "text-zinc-900 hover:bg-white/10 hover:text-zinc-900 dark:text-zinc-100 dark:hover:bg-white/10 dark:hover:text-zinc-100"
                   }`}
                   aria-label="Creator mode"
-                  title="Creator mode"
+                  title="Creator mode (Shift + C)"
                 >
                   <span className="material-symbols-outlined leading-none text-[20px]">edit</span>
                 </button>
@@ -191,7 +201,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
                       : "text-zinc-900 hover:bg-white/10 hover:text-zinc-900 dark:text-zinc-100 dark:hover:bg-white/10 dark:hover:text-zinc-100"
                   }`}
                   aria-label="Commenter mode"
-                  title="Commenter mode"
+                  title="Commenter mode (Shift + C)"
                 >
                   <span className="material-symbols-outlined leading-none text-[20px]">chat_add_on</span>
                 </button>
