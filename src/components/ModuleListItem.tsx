@@ -1,7 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Module } from "@/data/modules";
+import { ShareModal } from "./ShareModal";
 
 interface ModuleListItemProps {
   module: Module;
@@ -16,6 +18,10 @@ export function ModuleListItem({
   onToggle,
   onSelectPage,
 }: ModuleListItemProps) {
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [sharePageId, setSharePageId] = useState<string>("");
+  const [sharePageName, setSharePageName] = useState<string>("");
+  const [hoveredChildId, setHoveredChildId] = useState<string | null>(null);
   return (
     <div className="overflow-hidden border-b border-white/20 last:border-b-0 dark:border-white/10">
       <button
@@ -63,15 +69,43 @@ export function ModuleListItem({
                       </span>
                       <ul className="mt-1 flex flex-col gap-0.5 pl-2 sm:pl-3" role="list">
                         {item.children.map((child) => (
-                          <li key={child.label}>
+                          <li 
+                            key={child.label}
+                            onMouseEnter={() => setHoveredChildId(child.pageId || child.label)}
+                            onMouseLeave={() => setHoveredChildId(null)}
+                            className="group relative"
+                          >
                             {child.pageId && onSelectPage ? (
-                              <button
-                                type="button"
-                                onClick={() => onSelectPage(child.pageId!)}
-                                className="cursor-pointer text-left text-sm text-zinc-800 drop-shadow-sm transition-colors hover:text-zinc-900 dark:text-zinc-200 dark:hover:text-zinc-100 sm:text-base"
-                              >
-                                {child.label}
-                              </button>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => onSelectPage(child.pageId!)}
+                                  className="min-w-0 flex-1 cursor-pointer text-left text-sm text-zinc-800 drop-shadow-sm transition-colors hover:text-zinc-900 dark:text-zinc-200 dark:hover:text-zinc-100 sm:text-base"
+                                >
+                                  {child.label}
+                                </button>
+                                {hoveredChildId === child.pageId && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSharePageId(child.pageId!);
+                                      setSharePageName(`${item.title} - ${child.label}`);
+                                      setShareModalOpen(true);
+                                    }}
+                                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-zinc-600 transition-colors hover:bg-zinc-200/50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700/50 dark:hover:text-zinc-100"
+                                    aria-label="Share link"
+                                    title="Share link"
+                                  >
+                                    <span 
+                                      className="material-symbols-outlined text-[18px]"
+                                      style={{ transform: "scaleX(-1)" }}
+                                    >
+                                      reply
+                                    </span>
+                                  </button>
+                                )}
+                              </div>
                             ) : (
                               <span className="cursor-pointer text-sm text-zinc-800 drop-shadow-sm dark:text-zinc-200 sm:text-base">
                                 {child.label}
@@ -92,6 +126,14 @@ export function ModuleListItem({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Share Modal */}
+      <ShareModal
+        isOpen={shareModalOpen}
+        onClose={() => setShareModalOpen(false)}
+        pageId={sharePageId}
+        pageName={sharePageName}
+      />
     </div>
   );
 }
