@@ -172,6 +172,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedFramework, setSelectedFramework] = useState<FrameworkOption>("React Native");
   const [assetFormats, setAssetFormats] = useState<Record<number, FormatOption>>({});
+  const [isDragging, setIsDragging] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Get all images and SVGs from the page
@@ -287,6 +288,22 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
     setIsMenuOpen(false);
   };
 
+  const handleDragEnd = (_event: any, info: any) => {
+    setIsDragging(false);
+    const threshold = window.innerWidth / 3; // Switch position if dragged more than 1/3 screen width
+    
+    if (Math.abs(info.offset.x) > threshold) {
+      // Determine new position based on drag direction
+      if (info.offset.x > 0) {
+        // Dragged right
+        setDockPosition("right");
+      } else {
+        // Dragged left
+        setDockPosition("left");
+      }
+    }
+  };
+
   const panelWidth = 480; // 20% bigger than 400px
   const headerHeight = 56;
   const dockWidth = 320; // DOCK_WIDTH_EXPANDED from LeftDock
@@ -314,13 +331,28 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
       exit={{ y: "100%", opacity: 0 }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
     >
-      {/* Header - Clickable to minimize/maximize */}
-      <div
-        className="flex min-h-14 shrink-0 cursor-pointer items-center justify-between gap-3 border-b border-zinc-200 px-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50"
+      {/* Header - Clickable to minimize/maximize, draggable when minimized to change position */}
+      <motion.div
+        className={`flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50 ${
+          isMinimized ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
+        }`}
         style={{ height: headerHeight }}
-        onClick={() => setIsMinimized(!isMinimized)}
+        onClick={(e) => {
+          // Only toggle if not dragging
+          if (!isDragging) {
+            setIsMinimized(!isMinimized);
+          }
+        }}
+        drag={isMinimized ? "x" : false}
+        dragElastic={0.1}
+        dragConstraints={{ left: 0, right: 0 }}
+        onDragStart={() => setIsDragging(true)}
+        onDragEnd={handleDragEnd}
+        dragMomentum={false}
       >
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Inspector</h2>
+        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 select-none">
+          Inspector
+        </h2>
         
         <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
           {/* 3 Dots Menu */}
@@ -368,7 +400,10 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
           {/* Minimize/Maximize Button */}
           <button
             type="button"
-            onClick={() => setIsMinimized(!isMinimized)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsMinimized(!isMinimized);
+            }}
             className="flex h-9 w-9 items-center justify-center rounded-md text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
             aria-label={isMinimized ? "Maximize inspector" : "Minimize inspector"}
           >
@@ -377,7 +412,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
             </span>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
