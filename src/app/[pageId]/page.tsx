@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 import { LeftDock } from "@/components/LeftDock";
+import { InspectorPanel } from "@/components/InspectorPanel";
 import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
 import { PreSignUpV2 } from "@/components/pages/PreSignUpV2";
 import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
@@ -144,24 +145,30 @@ function PageContent() {
   // Regular view with dock and comments
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
-      <LeftDock
-        isExpanded={isDockExpanded}
-        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
-        onSelectPage={(selectedPageId) => {
-          if (selectedPageId) {
-            router.push(`/${selectedPageId}`);
-          } else {
-            router.push("/");
-          }
-          setIsDockExpanded(false);
-        }}
-        mode={mode}
-        onModeChange={setMode}
-      />
+      {/* Only show dock when not in code mode */}
+      {mode !== "code" && (
+        <LeftDock
+          isExpanded={isDockExpanded}
+          onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
+          onSelectPage={(selectedPageId) => {
+            if (selectedPageId) {
+              router.push(`/${selectedPageId}`);
+            } else {
+              router.push("/");
+            }
+            setIsDockExpanded(false);
+          }}
+          mode={mode}
+          onModeChange={setMode}
+        />
+      )}
+
+      {/* Inspector panel - only visible in code mode */}
+      <InspectorPanel isVisible={mode === "code"} />
 
       <motion.main
         className="relative z-10 flex min-h-0 flex-1 flex-col overflow-auto"
-        onClick={mode !== "commenter" ? () => isDockExpanded && setIsDockExpanded(false) : undefined}
+        onClick={mode !== "commenter" && mode !== "code" ? () => isDockExpanded && setIsDockExpanded(false) : undefined}
         role="main"
         tabIndex={-1}
       >

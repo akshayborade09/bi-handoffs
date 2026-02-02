@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { LeftDock } from "@/components/LeftDock";
+import { InspectorPanel } from "@/components/InspectorPanel";
 import { Header } from "@/components/Header";
 import { CommentProvider, useComments } from "@/contexts/CommentContext";
 
@@ -196,24 +197,30 @@ function HomeContent() {
       {/* Dot shader background – does not move when dock opens/closes; same in light and dark */}
       <div
         className="fixed inset-0 z-0 cursor-default"
-        onClick={() => isDockExpanded && setIsDockExpanded(false)}
+        onClick={() => isDockExpanded && mode !== "code" && setIsDockExpanded(false)}
         aria-hidden
       >
         <DotScreenShader />
       </div>
       
-      <LeftDock
-        isExpanded={isDockExpanded}
-        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
-        onSelectPage={(pageId) => {
-          if (pageId) {
-            router.push(`/${pageId}`);
-          }
-          setIsDockExpanded(false);
-        }}
-        mode={mode}
-        onModeChange={setMode}
-      />
+      {/* Only show dock when not in code mode */}
+      {mode !== "code" && (
+        <LeftDock
+          isExpanded={isDockExpanded}
+          onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
+          onSelectPage={(pageId) => {
+            if (pageId) {
+              router.push(`/${pageId}`);
+            }
+            setIsDockExpanded(false);
+          }}
+          mode={mode}
+          onModeChange={setMode}
+        />
+      )}
+
+      {/* Inspector panel - only visible in code mode */}
+      <InspectorPanel isVisible={mode === "code"} />
       
       <motion.main
         className="relative z-10 flex min-h-0 flex-1 flex-col overflow-auto pointer-events-none"
