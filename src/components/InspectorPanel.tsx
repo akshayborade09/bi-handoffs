@@ -543,7 +543,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
               >
                 {pageAssets.map((asset, index) => (
                   <div key={index} className="flex shrink-0 flex-col gap-2">
-                    <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-800">
+                    <div className="group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-800">
                       {asset.type === 'IMG' && asset.src ? (
                         <img 
                           src={asset.src} 
@@ -558,6 +558,29 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
                           />
                         </div>
                       )}
+                      
+                      {/* Locate Element Icon - Shows on hover */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          asset.element.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center',
+                            inline: 'center' 
+                          });
+                          // Optional: Add a temporary highlight effect
+                          asset.element.style.outline = '2px solid #3b82f6';
+                          asset.element.style.outlineOffset = '4px';
+                          setTimeout(() => {
+                            asset.element.style.outline = '';
+                            asset.element.style.outlineOffset = '';
+                          }, 2000);
+                        }}
+                        className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded bg-blue-500 text-white opacity-0 shadow-md transition-opacity hover:bg-blue-600 group-hover:opacity-100"
+                        aria-label="Locate element on page"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">my_location</span>
+                      </button>
                     </div>
                     <AssetDropdown
                       value={assetFormats[index] || "SVG"}
