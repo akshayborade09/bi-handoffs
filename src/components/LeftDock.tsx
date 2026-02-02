@@ -214,7 +214,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
                       : "text-zinc-900 hover:bg-white/10 hover:text-zinc-900 dark:text-zinc-100 dark:hover:bg-white/10 dark:hover:text-zinc-100"
                   }`}
                   aria-label="Code mode"
-                  title="Code mode"
+                  title="Code mode / Inspector (Shift + I)"
                 >
                   <span className="material-symbols-outlined leading-none text-[20px]">code</span>
                 </button>

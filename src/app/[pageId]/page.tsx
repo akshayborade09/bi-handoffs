@@ -96,6 +96,16 @@ function PageContent() {
         e.preventDefault();
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
       }
+
+      // "Shift + I" to toggle Inspector (code mode)
+      if (e.key === "I" && e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        const target = e.target as HTMLElement;
+        if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+          return;
+        }
+        e.preventDefault();
+        setMode(mode === "code" ? "creator" : "code");
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
