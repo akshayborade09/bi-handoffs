@@ -71,13 +71,6 @@ function PageContent() {
     }
   }, [mode]);
 
-  // Close Inspector when dock expands
-  useEffect(() => {
-    if (isDockExpanded && mode === "code") {
-      setMode("creator");
-    }
-  }, [isDockExpanded, mode, setMode]);
-
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -88,6 +81,10 @@ function PageContent() {
           return;
         }
         e.preventDefault();
+        // If opening dock and Inspector is open, close Inspector first
+        if (!isDockExpanded && mode === "code") {
+          setMode("creator");
+        }
         setIsDockExpanded((prev: boolean) => !prev);
       }
 
@@ -169,10 +166,16 @@ function PageContent() {
   // Regular view with dock and comments
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
-      {/* Dock - can expand even in code mode, Inspector will auto-minimize and move */}
+      {/* Dock - mutually exclusive with Inspector */}
       <LeftDock
         isExpanded={isDockExpanded}
-        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
+        onToggleExpand={() => {
+          // If opening dock and Inspector is open, close Inspector first
+          if (!isDockExpanded && mode === "code") {
+            setMode("creator");
+          }
+          setIsDockExpanded((prev: boolean) => !prev);
+        }}
         onSelectPage={(selectedPageId) => {
           if (selectedPageId) {
             router.push(`/${selectedPageId}`);
