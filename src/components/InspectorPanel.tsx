@@ -280,6 +280,9 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isMinimized) return;
     
+    // Prevent text selection while dragging
+    e.preventDefault();
+    
     setIsDragging(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     setDragStartX(clientX);
@@ -343,6 +346,21 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
     }
   }, [isDragging, dragStartX, dockPosition, isMinimized]);
 
+  // Prevent text selection globally while dragging - MUST be before early return
+  useEffect(() => {
+    if (isDragging) {
+      // Add global style to prevent text selection
+      document.body.style.userSelect = 'none';
+      document.body.style.webkitUserSelect = 'none';
+      
+      return () => {
+        // Remove global style
+        document.body.style.userSelect = '';
+        document.body.style.webkitUserSelect = '';
+      };
+    }
+  }, [isDragging]);
+
   if (!isVisible) return null;
 
   const handleDockChange = (position: "left" | "right") => {
@@ -378,10 +396,10 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
     >
       {/* Header - Clickable to minimize/maximize, draggable when minimized to change position */}
       <div
-        className={`flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50 ${
+        className={`flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50 select-none ${
           isMinimized ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
         }`}
-        style={{ height: headerHeight }}
+        style={{ height: headerHeight, userSelect: isDragging ? 'none' : 'auto' }}
         onClick={() => {
           // Only toggle if not dragging
           if (!isDragging) {
