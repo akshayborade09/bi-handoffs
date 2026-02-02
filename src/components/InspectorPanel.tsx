@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface InspectorPanelProps {
@@ -22,12 +23,25 @@ interface AssetDropdownProps {
 function AssetDropdown({ value, onChange, onDownload }: AssetDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   
   const options: FormatOption[] = ["SVG", "1x PNG", "1.5x PNG", "2x PNG", "3x PNG", "All-x PNG", "JPG", "PDF"];
 
   useEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.top - 8, // Position above button with small gap
+        left: rect.left,
+      });
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -43,8 +57,9 @@ function AssetDropdown({ value, onChange, onDownload }: AssetDropdownProps) {
 
   return (
     <div className="flex items-center gap-1">
-      <div className="relative" ref={dropdownRef}>
+      <div className="relative">
         <button
+          ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className="flex h-7 items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 py-1 text-xs text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
@@ -53,14 +68,20 @@ function AssetDropdown({ value, onChange, onDownload }: AssetDropdownProps) {
           <span className="material-symbols-outlined text-[14px]">expand_more</span>
         </button>
 
-        <AnimatePresence>
-          {isOpen && (
+        {isOpen && typeof document !== 'undefined' && createPortal(
+          <AnimatePresence>
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: -4 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: -4 }}
+              ref={dropdownRef}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.12 }}
-              className="absolute bottom-full left-0 z-[200] mb-1 w-28 overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-800"
+              className="fixed z-[9999] w-28 overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-800"
+              style={{
+                top: dropdownPosition.top,
+                left: dropdownPosition.left,
+                transform: 'translateY(-100%)',
+              }}
             >
               {options.map((option) => (
                 <button
@@ -80,8 +101,9 @@ function AssetDropdown({ value, onChange, onDownload }: AssetDropdownProps) {
                 </button>
               ))}
             </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>,
+          document.body
+        )}
       </div>
       
       <button
@@ -500,10 +522,10 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
       </div>
 
       {/* Content */}
-      <div className="relative flex flex-1 flex-col">
-        <div className="flex-1 overflow-y-auto overflow-x-visible px-4 pb-4 pt-48">
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4 pt-4">
           {/* Assets Section */}
-          <div className="relative mb-6 overflow-visible" style={{ marginTop: '-11rem' }}>
+          <div className="mb-6">
             <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Assets {pageAssets.length > 0 && <span className="text-zinc-500">({pageAssets.length})</span>}
             </h3>
@@ -513,7 +535,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
               </div>
             ) : (
               <div 
-                className="flex gap-3 overflow-x-auto overflow-y-visible pb-2 [&::-webkit-scrollbar]:hidden"
+                className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
                 style={{
                   scrollbarWidth: 'none',
                   msOverflowStyle: 'none',
