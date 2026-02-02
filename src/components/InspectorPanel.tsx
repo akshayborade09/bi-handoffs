@@ -56,11 +56,11 @@ function AssetDropdown({ value, onChange, onDownload }: AssetDropdownProps) {
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 4 }}
+              initial={{ opacity: 0, scale: 0.95, y: -4 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 4 }}
+              exit={{ opacity: 0, scale: 0.95, y: -4 }}
               transition={{ duration: 0.12 }}
-              className="absolute left-0 top-full z-10 mt-1 w-28 overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-800"
+              className="absolute bottom-full left-0 z-[200] mb-1 w-28 overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-lg dark:border-zinc-700 dark:bg-zinc-800"
             >
               {options.map((option) => (
                 <button
@@ -501,9 +501,9 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
 
       {/* Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-4">
-          {/* Assets Section */}
-          <div className="mb-6">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4 pt-40">
+          {/* Assets Section - with negative margin to compensate for top padding */}
+          <div className="mb-6" style={{ marginTop: '-9rem' }}>
             <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Assets {pageAssets.length > 0 && <span className="text-zinc-500">({pageAssets.length})</span>}
             </h3>
@@ -513,14 +513,14 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
               </div>
             ) : (
               <div 
-                className="flex gap-3 overflow-x-auto overflow-y-visible pb-32 [&::-webkit-scrollbar]:hidden"
+                className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
                 style={{
                   scrollbarWidth: 'none',
                   msOverflowStyle: 'none',
                 }}
               >
                 {pageAssets.map((asset, index) => (
-                  <div key={index} className="relative flex shrink-0 flex-col gap-2">
+                  <div key={index} className="flex shrink-0 flex-col gap-2">
                     <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-800">
                       {asset.type === 'IMG' && asset.src ? (
                         <img 
