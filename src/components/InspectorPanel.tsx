@@ -181,19 +181,52 @@ export function InspectorPanel({ isVisible, onClose }: InspectorPanelProps) {
 
     const collectAssets = () => {
       const assets: Array<{ src: string; type: string; element: HTMLElement }> = [];
+      const seenAssets = new Set<string>();
       
-      // Collect all images
-      const images = document.querySelectorAll('img');
+      // Helper to check if element is inside dock, header, or inspector
+      const isInExcludedContainer = (element: HTMLElement): boolean => {
+        let current: HTMLElement | null = element;
+        while (current && current !== document.body) {
+          // Exclude if inside LeftDock, Header, or Inspector panel
+          const classes = current.className || '';
+          if (
+            classes.includes('left-dock') ||
+            current.tagName === 'NAV' ||
+            current.tagName === 'HEADER' ||
+            current.getAttribute('role') === 'navigation'
+          ) {
+            return true;
+          }
+          current = current.parentElement;
+        }
+        return false;
+      };
+
+      // Collect all images from main content only
+      const images = document.querySelectorAll('main img');
       images.forEach((img) => {
-        if (img.src && !img.src.includes('data:image')) {
-          assets.push({ src: img.src, type: 'IMG', element: img });
+        const imgElement = img as HTMLImageElement;
+        if (imgElement.src && !imgElement.src.includes('data:image') && !isInExcludedContainer(imgElement)) {
+          // Remove duplicates by src
+          if (!seenAssets.has(imgElement.src)) {
+            seenAssets.add(imgElement.src);
+            assets.push({ src: imgElement.src, type: 'IMG', element: imgElement });
+          }
         }
       });
 
-      // Collect all SVGs
-      const svgs = document.querySelectorAll('svg');
+      // Collect all SVGs from main content only
+      const svgs = document.querySelectorAll('main svg');
       svgs.forEach((svg) => {
-        assets.push({ src: '', type: 'SVG', element: svg as unknown as HTMLElement });
+        const svgElement = svg as unknown as HTMLElement;
+        if (!isInExcludedContainer(svgElement)) {
+          // Remove duplicates by outerHTML
+          const svgString = svgElement.outerHTML;
+          if (!seenAssets.has(svgString)) {
+            seenAssets.add(svgString);
+            assets.push({ src: '', type: 'SVG', element: svgElement });
+          }
+        }
       });
 
       setPageAssets(assets);
