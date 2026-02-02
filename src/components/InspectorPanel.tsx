@@ -374,7 +374,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
         left: dockPosition === "left" ? leftPosition : undefined,
       }}
       exit={{ y: "100%", opacity: 0 }}
-      transition={{ type: "spring", damping: 25, stiffness: 300 }}
+      transition={{ type: "spring", damping: 35, stiffness: 250 }}
     >
       {/* Header - Clickable to minimize/maximize, draggable when minimized to change position */}
       <div

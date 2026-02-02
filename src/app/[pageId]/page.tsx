@@ -64,6 +64,20 @@ function PageContent() {
     localStorage.setItem("isDockExpanded", JSON.stringify(isDockExpanded));
   }, [isDockExpanded]);
 
+  // Close dock when Inspector opens (code mode)
+  useEffect(() => {
+    if (mode === "code") {
+      setIsDockExpanded(false);
+    }
+  }, [mode]);
+
+  // Close Inspector when dock expands
+  useEffect(() => {
+    if (isDockExpanded && mode === "code") {
+      setMode("creator");
+    }
+  }, [isDockExpanded, mode, setMode]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
