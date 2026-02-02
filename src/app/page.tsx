@@ -77,10 +77,7 @@ function HomeContent() {
           return;
         }
         e.preventDefault();
-        // If opening dock and Inspector is open, close Inspector first
-        if (!isDockExpanded && mode === "code") {
-          setMode("creator");
-        }
+        // Inspector will auto-minimize when dock expands
         setIsDockExpanded((prev: boolean) => !prev);
       }
       
@@ -225,16 +222,10 @@ function HomeContent() {
         <DotScreenShader />
       </div>
       
-      {/* Dock - mutually exclusive with Inspector */}
+      {/* Dock - Inspector will auto-minimize when dock expands */}
       <LeftDock
         isExpanded={isDockExpanded}
-        onToggleExpand={() => {
-          // If opening dock and Inspector is open, close Inspector first
-          if (!isDockExpanded && mode === "code") {
-            setMode("creator");
-          }
-          setIsDockExpanded((prev: boolean) => !prev);
-        }}
+        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
         onSelectPage={(pageId) => {
           if (pageId) {
             router.push(`/${pageId}`);

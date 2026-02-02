@@ -81,10 +81,7 @@ function PageContent() {
           return;
         }
         e.preventDefault();
-        // If opening dock and Inspector is open, close Inspector first
-        if (!isDockExpanded && mode === "code") {
-          setMode("creator");
-        }
+        // Inspector will auto-minimize when dock expands
         setIsDockExpanded((prev: boolean) => !prev);
       }
 
@@ -166,16 +163,10 @@ function PageContent() {
   // Regular view with dock and comments
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
-      {/* Dock - mutually exclusive with Inspector */}
+      {/* Dock - Inspector will auto-minimize when dock expands */}
       <LeftDock
         isExpanded={isDockExpanded}
-        onToggleExpand={() => {
-          // If opening dock and Inspector is open, close Inspector first
-          if (!isDockExpanded && mode === "code") {
-            setMode("creator");
-          }
-          setIsDockExpanded((prev: boolean) => !prev);
-        }}
+        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
         onSelectPage={(selectedPageId) => {
           if (selectedPageId) {
             router.push(`/${selectedPageId}`);
