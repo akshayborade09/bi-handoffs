@@ -173,6 +173,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
   const [selectedFramework, setSelectedFramework] = useState<FrameworkOption>("React Native");
   const [assetFormats, setAssetFormats] = useState<Record<number, FormatOption>>({});
   const [isDragging, setIsDragging] = useState(false);
+  const [dragStartX, setDragStartX] = useState(0);
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Get all images and SVGs from the page
@@ -288,21 +289,64 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
     setIsMenuOpen(false);
   };
 
-  const handleDragEnd = (_event: any, info: any) => {
-    setIsDragging(false);
-    const threshold = window.innerWidth / 3; // Switch position if dragged more than 1/3 screen width
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isMinimized) return;
     
-    if (Math.abs(info.offset.x) > threshold) {
-      // Determine new position based on drag direction
-      if (info.offset.x > 0) {
-        // Dragged right
-        setDockPosition("right");
+    setIsDragging(true);
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    setDragStartX(clientX);
+  };
+
+  const handleDragMove = (e: MouseEvent | TouchEvent) => {
+    if (!isDragging || !isMinimized) return;
+    
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const dragDistance = clientX - dragStartX;
+    
+    // Optional: Add visual feedback during drag (not implemented yet)
+  };
+
+  const handleDragEnd = (e: MouseEvent | TouchEvent) => {
+    if (!isDragging || !isMinimized) return;
+    
+    const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
+    const dragDistance = clientX - dragStartX;
+    const threshold = 100; // 100px threshold
+    
+    if (Math.abs(dragDistance) > threshold) {
+      // Determine new position based on current position and drag direction
+      if (dockPosition === "left") {
+        // Currently on left, dragged right = move to right
+        if (dragDistance > 0) {
+          setDockPosition("right");
+        }
       } else {
-        // Dragged left
-        setDockPosition("left");
+        // Currently on right, dragged left = move to left
+        if (dragDistance < 0) {
+          setDockPosition("left");
+        }
       }
     }
+    
+    setIsDragging(false);
   };
+
+  // Add global mouse/touch event listeners for drag
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleDragMove);
+      window.addEventListener('mouseup', handleDragEnd);
+      window.addEventListener('touchmove', handleDragMove);
+      window.addEventListener('touchend', handleDragEnd);
+      
+      return () => {
+        window.removeEventListener('mousemove', handleDragMove);
+        window.removeEventListener('mouseup', handleDragEnd);
+        window.removeEventListener('touchmove', handleDragMove);
+        window.removeEventListener('touchend', handleDragEnd);
+      };
+    }
+  }, [isDragging, dragStartX, dockPosition, isMinimized]);
 
   const panelWidth = 480; // 20% bigger than 400px
   const headerHeight = 56;
@@ -332,23 +376,19 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
     >
       {/* Header - Clickable to minimize/maximize, draggable when minimized to change position */}
-      <motion.div
+      <div
         className={`flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50 ${
           isMinimized ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
         }`}
         style={{ height: headerHeight }}
-        onClick={(e) => {
+        onClick={() => {
           // Only toggle if not dragging
           if (!isDragging) {
             setIsMinimized(!isMinimized);
           }
         }}
-        drag={isMinimized ? "x" : false}
-        dragElastic={0.1}
-        dragConstraints={{ left: 0, right: 0 }}
-        onDragStart={() => setIsDragging(true)}
-        onDragEnd={handleDragEnd}
-        dragMomentum={false}
+        onMouseDown={handleDragStart}
+        onTouchStart={handleDragStart}
       >
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 select-none">
           Inspector
@@ -412,7 +452,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
             </span>
           </button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Content */}
       <div className="flex flex-1 flex-col overflow-hidden">
