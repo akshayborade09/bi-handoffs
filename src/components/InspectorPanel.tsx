@@ -273,6 +273,13 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
     // TODO: Implement actual download functionality
   };
 
+  // Minimize when dock expands - MUST be before early return to follow Rules of Hooks
+  useEffect(() => {
+    if (isDockExpanded) {
+      setIsMinimized(true);
+    }
+  }, [isDockExpanded]);
+
   if (!isVisible) return null;
 
   const handleDockChange = (position: "left" | "right") => {
@@ -284,13 +291,6 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
   const headerHeight = 56;
   const dockWidth = 320; // DOCK_WIDTH_EXPANDED from LeftDock
   const dockInset = 12; // DOCK_INSET from LeftDock
-
-  // Minimize when dock expands
-  useEffect(() => {
-    if (isDockExpanded) {
-      setIsMinimized(true);
-    }
-  }, [isDockExpanded]);
 
   // Calculate position - if dock is expanded on left and inspector is on left, push it right
   const shouldPushRight = isDockExpanded && dockPosition === "left";
