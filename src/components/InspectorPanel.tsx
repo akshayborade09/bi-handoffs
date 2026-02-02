@@ -563,12 +563,23 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
                       <button
                         type="button"
                         onClick={() => {
-                          asset.element.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'center',
-                            inline: 'center' 
+                          // Get element position
+                          const rect = asset.element.getBoundingClientRect();
+                          const absoluteTop = rect.top + window.scrollY;
+                          const absoluteLeft = rect.left + window.scrollX;
+                          
+                          // Calculate centered position
+                          const centerY = absoluteTop - (window.innerHeight / 2) + (rect.height / 2);
+                          const centerX = absoluteLeft - (window.innerWidth / 2) + (rect.width / 2);
+                          
+                          // Scroll to element
+                          window.scrollTo({
+                            top: centerY,
+                            left: centerX,
+                            behavior: 'smooth'
                           });
-                          // Optional: Add a temporary highlight effect
+                          
+                          // Add temporary highlight effect
                           asset.element.style.outline = '2px solid #3b82f6';
                           asset.element.style.outlineOffset = '4px';
                           setTimeout(() => {
