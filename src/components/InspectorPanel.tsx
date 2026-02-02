@@ -500,10 +500,10 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4 pt-40">
-          {/* Assets Section - with negative margin to compensate for top padding */}
-          <div className="mb-6" style={{ marginTop: '-9rem' }}>
+      <div className="relative flex flex-1 flex-col">
+        <div className="flex-1 overflow-y-auto overflow-x-visible px-4 pb-4 pt-48">
+          {/* Assets Section */}
+          <div className="relative mb-6 overflow-visible" style={{ marginTop: '-11rem' }}>
             <h3 className="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Assets {pageAssets.length > 0 && <span className="text-zinc-500">({pageAssets.length})</span>}
             </h3>
@@ -513,7 +513,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
               </div>
             ) : (
               <div 
-                className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
+                className="flex gap-3 overflow-x-auto overflow-y-visible pb-2 [&::-webkit-scrollbar]:hidden"
                 style={{
                   scrollbarWidth: 'none',
                   msOverflowStyle: 'none',
