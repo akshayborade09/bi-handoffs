@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface InspectorPanelProps {
   isVisible: boolean;
+  isDockExpanded?: boolean;
   onClose?: () => void;
 }
 
@@ -165,7 +166,7 @@ function FrameworkDropdown({ value, onChange }: FrameworkDropdownProps) {
   );
 }
 
-export function InspectorPanel({ isVisible, onClose }: InspectorPanelProps) {
+export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorPanelProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [dockPosition, setDockPosition] = useState<"left" | "right">("right");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -281,17 +282,34 @@ export function InspectorPanel({ isVisible, onClose }: InspectorPanelProps) {
 
   const panelWidth = 480; // 20% bigger than 400px
   const headerHeight = 56;
+  const dockWidth = 320; // DOCK_WIDTH_EXPANDED from LeftDock
+  const dockInset = 12; // DOCK_INSET from LeftDock
+
+  // Minimize when dock expands
+  useEffect(() => {
+    if (isDockExpanded) {
+      setIsMinimized(true);
+    }
+  }, [isDockExpanded]);
+
+  // Calculate position - if dock is expanded on left and inspector is on left, push it right
+  const shouldPushRight = isDockExpanded && dockPosition === "left";
+  const leftPosition = shouldPushRight ? `calc(${dockWidth}px + ${dockInset * 2 + 12}px)` : "0.75rem"; // 0.75rem = 12px = left-3
 
   return (
     <motion.div
-      className={`fixed bottom-3 z-[150] flex flex-col rounded-lg border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900 ${
-        dockPosition === "left" ? "left-3" : "right-3"
+      className={`fixed bottom-3 z-[50] flex flex-col rounded-lg border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900 ${
+        dockPosition === "right" ? "right-3" : ""
       }`}
-      style={{ width: panelWidth }}
+      style={{ 
+        width: panelWidth,
+        ...(dockPosition === "left" ? { left: leftPosition } : {})
+      }}
       initial={{ y: "100%", opacity: 0 }}
       animate={{
         y: isMinimized ? `calc(100% - ${headerHeight}px)` : 0,
         opacity: 1,
+        left: dockPosition === "left" ? leftPosition : undefined,
       }}
       exit={{ y: "100%", opacity: 0 }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}

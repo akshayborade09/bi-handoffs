@@ -234,7 +234,7 @@ function HomeContent() {
       />
 
       {/* Inspector panel - only visible in code mode */}
-      <InspectorPanel isVisible={mode === "code"} />
+      <InspectorPanel isVisible={mode === "code"} isDockExpanded={isDockExpanded} />
       
       <motion.main
         className="relative z-10 flex min-h-0 flex-1 flex-col overflow-auto pointer-events-none"
