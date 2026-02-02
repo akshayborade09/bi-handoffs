@@ -244,13 +244,34 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
       setAssetFormats(formats);
     };
 
+    // Collect assets on mount
     collectAssets();
     
-    // Re-collect on page changes
-    const observer = new MutationObserver(collectAssets);
-    observer.observe(document.body, { childList: true, subtree: true });
+    // Debounced asset collection to prevent performance issues
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const debouncedCollectAssets = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        collectAssets();
+      }, 500); // Wait 500ms after last change before collecting
+    };
 
-    return () => observer.disconnect();
+    // Only observe main content area, not entire body
+    const mainElement = document.querySelector('main');
+    if (mainElement) {
+      const observer = new MutationObserver(debouncedCollectAssets);
+      observer.observe(mainElement, { 
+        childList: true, 
+        subtree: true,
+        attributes: false, // Don't watch attribute changes
+        characterData: false // Don't watch text changes
+      });
+
+      return () => {
+        clearTimeout(timeoutId);
+        observer.disconnect();
+      };
+    }
   }, [isVisible]);
 
   // Close menu when clicking outside
