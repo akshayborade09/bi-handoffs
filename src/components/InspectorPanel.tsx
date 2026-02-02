@@ -275,20 +275,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
     // TODO: Implement actual download functionality
   };
 
-  // Minimize when dock expands - MUST be before early return to follow Rules of Hooks
-  useEffect(() => {
-    if (isDockExpanded) {
-      setIsMinimized(true);
-    }
-  }, [isDockExpanded]);
-
-  if (!isVisible) return null;
-
-  const handleDockChange = (position: "left" | "right") => {
-    setDockPosition(position);
-    setIsMenuOpen(false);
-  };
-
+  // Handler functions for drag - defined before useEffect
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isMinimized) return;
     
@@ -331,7 +318,14 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
     setIsDragging(false);
   };
 
-  // Add global mouse/touch event listeners for drag
+  // Minimize when dock expands - MUST be before early return to follow Rules of Hooks
+  useEffect(() => {
+    if (isDockExpanded) {
+      setIsMinimized(true);
+    }
+  }, [isDockExpanded]);
+
+  // Add global mouse/touch event listeners for drag - MUST be before early return
   useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleDragMove);
@@ -347,6 +341,13 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
       };
     }
   }, [isDragging, dragStartX, dockPosition, isMinimized]);
+
+  if (!isVisible) return null;
+
+  const handleDockChange = (position: "left" | "right") => {
+    setDockPosition(position);
+    setIsMenuOpen(false);
+  };
 
   const panelWidth = 480; // 20% bigger than 400px
   const headerHeight = 56;
