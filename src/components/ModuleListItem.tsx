@@ -68,14 +68,14 @@ export function ModuleListItem({
                       <span className="cursor-pointer text-xs font-medium uppercase tracking-wide text-zinc-700 drop-shadow-sm dark:text-zinc-300 sm:text-sm">
                         {item.title}
                       </span>
-                      <ul className="mt-1 flex flex-col gap-1 pl-1 sm:pl-1" role="list">
+                      <ul className="mt-1 flex flex-col pl-1 sm:pl-1" role="list">
                         {item.children.map((child) => (
                           <li 
                             key={child.label}
                             className="group/item rounded-lg transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800"
                           >
                             {child.pageId && onSelectPage ? (
-                              <div className="flex items-center gap-2 py-1.5 pl-2 pr-1">
+                              <div className="flex items-center gap-2 py-1 pl-2 pr-1">
                                 <button
                                   type="button"
                                   onClick={() => onSelectPage(child.pageId!)}
