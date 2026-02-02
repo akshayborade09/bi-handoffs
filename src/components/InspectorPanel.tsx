@@ -360,18 +360,16 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
 
   return (
     <motion.div
-      className={`fixed bottom-3 z-[50] flex flex-col rounded-lg border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900 ${
-        dockPosition === "right" ? "right-3" : ""
-      }`}
+      className="fixed bottom-3 z-[50] flex flex-col rounded-lg border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900"
       style={{ 
         width: panelWidth,
-        ...(dockPosition === "left" ? { left: leftPosition } : {})
+        ...(dockPosition === "left" ? { left: leftPosition, right: "auto" } : { right: "0.75rem", left: "auto" })
       }}
       initial={{ y: "100%", opacity: 0 }}
       animate={{
         y: isMinimized ? `calc(100% - ${headerHeight}px)` : 0,
         opacity: 1,
-        left: dockPosition === "left" ? leftPosition : undefined,
+        ...(dockPosition === "left" ? { left: leftPosition, right: "auto" } : { right: "0.75rem", left: "auto" })
       }}
       exit={{ y: "100%", opacity: 0 }}
       transition={{ type: "spring", damping: 35, stiffness: 250 }}
