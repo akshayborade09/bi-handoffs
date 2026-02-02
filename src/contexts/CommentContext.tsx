@@ -20,8 +20,8 @@ export interface Comment {
 }
 
 interface CommentContextType {
-  mode: "creator" | "commenter";
-  setMode: (mode: "creator" | "commenter") => void;
+  mode: "creator" | "commenter" | "code";
+  setMode: (mode: "creator" | "commenter" | "code") => void;
   currentPageId: string;
   setCurrentPageId: (pageId: string) => void;
   comments: Comment[];
@@ -36,7 +36,7 @@ interface CommentContextType {
 const CommentContext = createContext<CommentContextType | undefined>(undefined);
 
 export function CommentProvider({ children }: { children: ReactNode }) {
-  const [mode, setMode] = useState<"creator" | "commenter">("creator");
+  const [mode, setMode] = useState<"creator" | "commenter" | "code">("creator");
   const [currentPageId, setCurrentPageId] = useState<string>("home");
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(false);

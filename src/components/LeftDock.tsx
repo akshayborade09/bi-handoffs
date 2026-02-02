@@ -25,8 +25,8 @@ interface LeftDockProps {
   isExpanded: boolean;
   onToggleExpand: () => void;
   onSelectPage?: (pageId: string) => void;
-  mode: "creator" | "commenter";
-  onModeChange: (mode: "creator" | "commenter") => void;
+  mode: "creator" | "commenter" | "code";
+  onModeChange: (mode: "creator" | "commenter" | "code") => void;
 }
 
 export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onModeChange }: LeftDockProps) {
@@ -204,6 +204,19 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
                   title="Commenter mode (Shift + C)"
                 >
                   <span className="material-symbols-outlined leading-none text-[20px]">chat_add_on</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onModeChange("code")}
+                  className={`flex min-h-7 min-w-7 items-center justify-center rounded-md transition-colors ${
+                    mode === "code"
+                      ? "bg-white/90 text-zinc-900 shadow-sm backdrop-blur-sm dark:bg-white/30 dark:text-zinc-100"
+                      : "text-zinc-900 hover:bg-white/10 hover:text-zinc-900 dark:text-zinc-100 dark:hover:bg-white/10 dark:hover:text-zinc-100"
+                  }`}
+                  aria-label="Code mode"
+                  title="Code mode"
+                >
+                  <span className="material-symbols-outlined leading-none text-[20px]">code</span>
                 </button>
               </div>
             </div>

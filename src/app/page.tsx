@@ -72,7 +72,7 @@ function HomeContent() {
         setIsDockExpanded((prev: boolean) => !prev);
       }
       
-      // "Shift + C" to toggle mode
+      // "Shift + C" to cycle through modes
       if (e.key === "C" && e.shiftKey && !e.ctrlKey && !e.metaKey) {
         // Ignore if typing in an input or textarea
         const target = e.target as HTMLElement;
@@ -80,7 +80,7 @@ function HomeContent() {
           return;
         }
         e.preventDefault();
-        setMode(mode === "creator" ? "commenter" : "creator");
+        setMode(mode === "creator" ? "commenter" : mode === "commenter" ? "code" : "creator");
       }
       
       // "Shift + D" to toggle theme
