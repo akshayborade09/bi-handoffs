@@ -192,7 +192,8 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
         let current: HTMLElement | null = element;
         while (current && current !== document.body) {
           // Exclude if inside LeftDock, Header, or Inspector panel
-          const classes = current.className || '';
+          // Convert className to string (can be DOMTokenList for SVG elements)
+          const classes = typeof current.className === 'string' ? current.className : String(current.className || '');
           if (
             classes.includes('left-dock') ||
             current.tagName === 'NAV' ||
