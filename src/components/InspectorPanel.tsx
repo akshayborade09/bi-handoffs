@@ -491,20 +491,26 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
                 <p className="text-sm text-zinc-500 dark:text-zinc-400">No assets found on this page</p>
               </div>
             ) : (
-              <div className="flex gap-3 overflow-x-auto pb-2">
+              <div 
+                className="flex gap-3 overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden"
+                style={{
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none',
+                }}
+              >
                 {pageAssets.map((asset, index) => (
                   <div key={index} className="flex shrink-0 flex-col gap-2">
-                    <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800">
+                    <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-800">
                       {asset.type === 'IMG' && asset.src ? (
                         <img 
                           src={asset.src} 
                           alt={`Asset ${index + 1}`}
-                          className="h-full w-full object-contain"
+                          className="max-h-full max-w-full object-contain object-center"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center p-2">
+                        <div className="flex h-full w-full items-center justify-center">
                           <div 
-                            className="h-full w-full"
+                            className="max-h-full max-w-full"
                             dangerouslySetInnerHTML={{ __html: asset.element.outerHTML }}
                           />
                         </div>
