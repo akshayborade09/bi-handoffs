@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 interface InspectorPanelProps {
   isVisible: boolean;
   isDockExpanded?: boolean;
+  onMaximize?: () => void;
   onClose?: () => void;
 }
 
@@ -166,7 +167,7 @@ function FrameworkDropdown({ value, onChange }: FrameworkDropdownProps) {
   );
 }
 
-export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorPanelProps) {
+export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }: InspectorPanelProps) {
   const [isMinimized, setIsMinimized] = useState(false);
   const [dockPosition, setDockPosition] = useState<"left" | "right">("right");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -384,6 +385,10 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
         onClick={() => {
           // Only toggle if not dragging
           if (!isDragging) {
+            // If maximizing (currently minimized), close the dock
+            if (isMinimized && onMaximize) {
+              onMaximize();
+            }
             setIsMinimized(!isMinimized);
           }
         }}
