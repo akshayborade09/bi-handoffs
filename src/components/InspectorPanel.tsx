@@ -56,16 +56,16 @@ function AssetDropdown({ value, onChange, onDownload }: AssetDropdownProps) {
   }, [isOpen]);
 
   return (
-    <div className="flex items-center gap-1">
-      <div className="relative">
+    <div className="flex w-24 items-center gap-1">
+      <div className="relative flex-1 min-w-0">
         <button
           ref={buttonRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="flex h-7 items-center gap-1 rounded-md border border-zinc-200 bg-white px-2 py-1 text-xs text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
+          className="flex h-7 w-full items-center gap-0.5 rounded-md border border-zinc-200 bg-white px-1.5 py-1 text-xs text-zinc-900 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700"
         >
-          <span className="whitespace-nowrap">{value}</span>
-          <span className="material-symbols-outlined text-[14px]">expand_more</span>
+          <span className="truncate flex-1 text-left">{value}</span>
+          <span className="material-symbols-outlined shrink-0 text-[14px]">expand_more</span>
         </button>
 
         {isOpen && typeof document !== 'undefined' && createPortal(
@@ -109,7 +109,7 @@ function AssetDropdown({ value, onChange, onDownload }: AssetDropdownProps) {
       <button
         type="button"
         onClick={onDownload}
-        className="flex h-7 w-7 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
         aria-label="Download asset"
       >
         <span className="material-symbols-outlined text-[16px]">download</span>
