@@ -263,14 +263,15 @@ export function InspectorPanel({ isVisible, onClose }: InspectorPanelProps) {
       exit={{ y: "100%", opacity: 0 }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
     >
-      {/* Header */}
+      {/* Header - Clickable to minimize/maximize */}
       <div
-        className="flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-4 dark:border-zinc-800"
+        className="flex min-h-14 shrink-0 cursor-pointer items-center justify-between gap-3 border-b border-zinc-200 px-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50"
         style={{ height: headerHeight }}
+        onClick={() => setIsMinimized(!isMinimized)}
       >
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Inspector</h2>
         
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
           {/* 3 Dots Menu */}
           <div className="relative" ref={menuRef}>
             <button
@@ -297,7 +298,7 @@ export function InspectorPanel({ isVisible, onClose }: InspectorPanelProps) {
                     onClick={() => handleDockChange("left")}
                     className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-zinc-900 transition-colors hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-700"
                   >
-                    <span className="material-symbols-outlined text-[20px]">dock_to_left</span>
+                    <span className="material-symbols-outlined text-[20px]">dock_to_right</span>
                     <span>Dock to Left</span>
                   </button>
                   <button
@@ -305,7 +306,7 @@ export function InspectorPanel({ isVisible, onClose }: InspectorPanelProps) {
                     onClick={() => handleDockChange("right")}
                     className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-zinc-900 transition-colors hover:bg-zinc-100 dark:text-zinc-100 dark:hover:bg-zinc-700"
                   >
-                    <span className="material-symbols-outlined text-[20px]">dock_to_right</span>
+                    <span className="material-symbols-outlined text-[20px]">dock_to_left</span>
                     <span>Dock to Right</span>
                   </button>
                 </motion.div>
