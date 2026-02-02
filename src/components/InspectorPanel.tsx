@@ -576,7 +576,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false, onMaximize }
                             asset.element.style.outlineOffset = '';
                           }, 2000);
                         }}
-                        className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded bg-blue-500 text-white opacity-0 shadow-md transition-opacity hover:bg-blue-600 group-hover:opacity-100"
+                        className="absolute bottom-1 right-1 flex h-6 w-6 items-center justify-center rounded bg-white/90 text-zinc-900 opacity-0 shadow-md transition-opacity hover:bg-white dark:bg-zinc-900/90 dark:text-zinc-100 dark:hover:bg-zinc-900 group-hover:opacity-100"
                         aria-label="Locate element on page"
                       >
                         <span className="material-symbols-outlined text-[16px]">my_location</span>
