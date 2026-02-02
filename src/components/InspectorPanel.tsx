@@ -279,7 +279,6 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isMinimized) return;
     
-    e.preventDefault(); // Prevent text selection during drag
     setIsDragging(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     setDragStartX(clientX);
@@ -288,7 +287,6 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
   const handleDragMove = (e: MouseEvent | TouchEvent) => {
     if (!isDragging || !isMinimized) return;
     
-    e.preventDefault(); // Prevent text selection during drag
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     const dragDistance = clientX - dragStartX;
     
@@ -298,7 +296,6 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
   const handleDragEnd = (e: MouseEvent | TouchEvent) => {
     if (!isDragging || !isMinimized) return;
     
-    e.preventDefault(); // Prevent any default behavior
     const clientX = 'changedTouches' in e ? e.changedTouches[0].clientX : e.clientX;
     const dragDistance = clientX - dragStartX;
     const threshold = 100; // 100px threshold
@@ -365,27 +362,27 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
     <motion.div
       className="fixed bottom-3 z-[50] flex flex-col rounded-lg border border-zinc-200 bg-white shadow-2xl dark:border-zinc-800 dark:bg-zinc-900"
       style={{ 
-        width: panelWidth,
+        width: panelWidth
       }}
       initial={{ 
         y: "100%", 
         opacity: 0,
-        ...(dockPosition === "left" ? { left: "0.75rem" } : { right: "0.75rem" })
+        ...(dockPosition === "left" ? { left: leftPosition, right: "auto" } : { right: "0.75rem", left: "auto" })
       }}
       animate={{
         y: isMinimized ? `calc(100% - ${headerHeight}px)` : 0,
         opacity: 1,
-        ...(dockPosition === "left" ? { left: leftPosition } : { right: "0.75rem" })
+        ...(dockPosition === "left" ? { left: leftPosition, right: "auto" } : { right: "0.75rem", left: "auto" })
       }}
       exit={{ y: "100%", opacity: 0 }}
       transition={{ type: "spring", damping: 35, stiffness: 250 }}
     >
       {/* Header - Clickable to minimize/maximize, draggable when minimized to change position */}
       <div
-        className={`flex min-h-14 shrink-0 select-none items-center justify-between gap-3 border-b border-zinc-200 px-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50 ${
+        className={`flex min-h-14 shrink-0 items-center justify-between gap-3 border-b border-zinc-200 px-4 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50 ${
           isMinimized ? "cursor-grab active:cursor-grabbing" : "cursor-pointer"
         }`}
-        style={{ height: headerHeight, userSelect: "none", WebkitUserSelect: "none" }}
+        style={{ height: headerHeight }}
         onClick={() => {
           // Only toggle if not dragging
           if (!isDragging) {
@@ -395,7 +392,7 @@ export function InspectorPanel({ isVisible, isDockExpanded = false }: InspectorP
         onMouseDown={handleDragStart}
         onTouchStart={handleDragStart}
       >
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100 select-none">
           Inspector
         </h2>
         
