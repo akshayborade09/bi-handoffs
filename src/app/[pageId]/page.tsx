@@ -77,14 +77,14 @@ function PageContent() {
         setIsDockExpanded((prev: boolean) => !prev);
       }
 
-      // "Shift + C" to cycle through modes
+      // "Shift + C" to toggle between creator and commenter modes
       if (e.key === "C" && e.shiftKey && !e.ctrlKey && !e.metaKey) {
         const target = e.target as HTMLElement;
         if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
           return;
         }
         e.preventDefault();
-        setMode(mode === "creator" ? "commenter" : mode === "commenter" ? "code" : "creator");
+        setMode(mode === "creator" ? "commenter" : "creator");
       }
 
       // "Shift + D" to toggle theme
@@ -155,23 +155,26 @@ function PageContent() {
   // Regular view with dock and comments
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
-      {/* Only show dock when not in code mode */}
-      {mode !== "code" && (
-        <LeftDock
-          isExpanded={isDockExpanded}
-          onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
-          onSelectPage={(selectedPageId) => {
-            if (selectedPageId) {
-              router.push(`/${selectedPageId}`);
-            } else {
-              router.push("/");
-            }
-            setIsDockExpanded(false);
-          }}
-          mode={mode}
-          onModeChange={setMode}
-        />
-      )}
+      {/* Dock - collapsed (floating icon only) when in code mode */}
+      <LeftDock
+        isExpanded={mode === "code" ? false : isDockExpanded}
+        onToggleExpand={() => {
+          // Don't allow expanding in code mode
+          if (mode !== "code") {
+            setIsDockExpanded((prev: boolean) => !prev);
+          }
+        }}
+        onSelectPage={(selectedPageId) => {
+          if (selectedPageId) {
+            router.push(`/${selectedPageId}`);
+          } else {
+            router.push("/");
+          }
+          setIsDockExpanded(false);
+        }}
+        mode={mode}
+        onModeChange={setMode}
+      />
 
       {/* Inspector panel - only visible in code mode */}
       <InspectorPanel isVisible={mode === "code"} />
