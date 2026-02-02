@@ -214,15 +214,10 @@ function HomeContent() {
         <DotScreenShader />
       </div>
       
-      {/* Dock - collapsed (floating icon only) when in code mode */}
+      {/* Dock - can expand even in code mode, Inspector will auto-minimize and move */}
       <LeftDock
-        isExpanded={mode === "code" ? false : isDockExpanded}
-        onToggleExpand={() => {
-          // Don't allow expanding in code mode
-          if (mode !== "code") {
-            setIsDockExpanded((prev: boolean) => !prev);
-          }
-        }}
+        isExpanded={isDockExpanded}
+        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
         onSelectPage={(pageId) => {
           if (pageId) {
             router.push(`/${pageId}`);

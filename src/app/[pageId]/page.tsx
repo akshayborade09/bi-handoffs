@@ -155,15 +155,10 @@ function PageContent() {
   // Regular view with dock and comments
   return (
     <div className="relative flex min-h-screen min-h-dvh flex-col bg-zinc-50 font-sans dark:bg-zinc-950 md:min-h-screen">
-      {/* Dock - collapsed (floating icon only) when in code mode */}
+      {/* Dock - can expand even in code mode, Inspector will auto-minimize and move */}
       <LeftDock
-        isExpanded={mode === "code" ? false : isDockExpanded}
-        onToggleExpand={() => {
-          // Don't allow expanding in code mode
-          if (mode !== "code") {
-            setIsDockExpanded((prev: boolean) => !prev);
-          }
-        }}
+        isExpanded={isDockExpanded}
+        onToggleExpand={() => setIsDockExpanded((prev: boolean) => !prev)}
         onSelectPage={(selectedPageId) => {
           if (selectedPageId) {
             router.push(`/${selectedPageId}`);
