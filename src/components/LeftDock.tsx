@@ -100,6 +100,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
         <motion.button
           type="button"
           onClick={onToggleExpand}
+          data-floating-dock-toggle="true"
           className="fixed left-3 top-3 z-[200] flex min-h-10 min-w-10 touch-manipulation cursor-pointer items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-900 shadow-lg transition-colors hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-800 dark:bg-black dark:text-white dark:hover:bg-zinc-950 dark:hover:text-white"
           aria-label="Expand dock"
           title="Expand dock (/)"
@@ -115,6 +116,7 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
 
       {/* Dock panel – slides off-screen left when collapsed, in when expanded */}
       <motion.aside
+        data-left-dock="true"
         className="fixed left-3 top-3 bottom-3 z-20 flex flex-col overflow-hidden rounded-lg bg-white/80 dark:bg-black/60 border border-white/30 shadow-2xl backdrop-blur-2xl backdrop-saturate-150 dark:border-white/20"
         style={{ width: DOCK_WIDTH_EXPANDED }}
         animate={{ x: isExpanded ? 0 : -DOCK_SLIDE_OFFSET }}
@@ -213,8 +215,8 @@ export function LeftDock({ isExpanded, onToggleExpand, onSelectPage, mode, onMod
                       ? "bg-white/90 text-zinc-900 shadow-sm backdrop-blur-sm dark:bg-white/30 dark:text-zinc-100"
                       : "text-zinc-900 hover:bg-white/10 hover:text-zinc-900 dark:text-zinc-100 dark:hover:bg-white/10 dark:hover:text-zinc-100"
                   }`}
-                  aria-label="Code mode"
-                  title="Code mode / Inspector (Shift + I)"
+                  aria-label="Inspector + Dev Mode"
+                  title="Inspector + Dev Mode (Shift + I)"
                 >
                   <span className="material-symbols-outlined leading-none text-[20px]">code</span>
                 </button>

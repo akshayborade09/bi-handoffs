@@ -46,6 +46,7 @@ function PageContent() {
   });
   const { mode, setMode, setCurrentPageId } = useComments();
   const { resolvedTheme, setTheme } = useTheme();
+  const [isDevMode, setIsDevMode] = useState(false);
 
   // Validate pageId - redirect to home if invalid
   useEffect(() => {
@@ -70,6 +71,29 @@ function PageContent() {
       setIsDockExpanded(false);
     }
   }, [mode]);
+
+  // Sync dev mode with inspector: inspector and dev mode are always together
+  useEffect(() => {
+    if (mode === "code" && !isDevMode) {
+      // Inspector opened, turn on dev mode
+      setIsDevMode(true);
+    } else if (mode !== "code" && isDevMode) {
+      // Inspector closed, turn off dev mode
+      setIsDevMode(false);
+    }
+  }, [mode, isDevMode]);
+
+  // Add dev-mode class to body when dev mode is active
+  useEffect(() => {
+    if (isDevMode) {
+      document.body.setAttribute('data-dev-mode', 'true');
+    } else {
+      document.body.removeAttribute('data-dev-mode');
+    }
+    return () => {
+      document.body.removeAttribute('data-dev-mode');
+    };
+  }, [isDevMode]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -105,20 +129,32 @@ function PageContent() {
         setTheme(resolvedTheme === "dark" ? "light" : "dark");
       }
 
-      // "Shift + I" to toggle Inspector (code mode)
+      // "Shift + I" to toggle Inspector + Dev Mode together
       if (e.key === "I" && e.shiftKey && !e.ctrlKey && !e.metaKey) {
         const target = e.target as HTMLElement;
         if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
           return;
         }
         e.preventDefault();
-        setMode(mode === "code" ? "creator" : "code");
+        
+        // Toggle both inspector and dev mode together
+        if (isDevMode) {
+          // Turn OFF both dev mode and inspector
+          setIsDevMode(false);
+          setMode("creator");
+        } else {
+          // Turn ON both dev mode and inspector
+          setIsDevMode(true);
+          setMode("code");
+        }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [mode, setMode, resolvedTheme, setTheme]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mode, setMode, resolvedTheme, setTheme, isDevMode]);
 
   // Show loading spinner while checking auth (skip auth check in share view)
   if (!isShareView && status === "loading") {
@@ -184,7 +220,10 @@ function PageContent() {
         isVisible={mode === "code"} 
         isDockExpanded={isDockExpanded}
         onMaximize={() => setIsDockExpanded(false)}
+        isDevMode={isDevMode}
+        onDevModeChange={setIsDevMode}
       />
+
 
       <motion.main
         className="relative z-10 flex min-h-0 flex-1 flex-col overflow-auto"

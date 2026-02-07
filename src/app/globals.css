@@ -56,3 +56,16 @@ body {
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "liga" 1;
 }
+
+/* Dev Mode: Override all cursors to default */
+body[data-dev-mode="true"] * {
+  cursor: default !important;
+}
+
+/* Dev Mode: But keep normal cursors and interactions in inspector, dock, and floating toggle */
+body[data-dev-mode="true"] [data-inspector-panel="true"] *,
+body[data-dev-mode="true"] [data-left-dock="true"] *,
+body[data-dev-mode="true"] [data-floating-dock-toggle="true"] {
+  cursor: auto !important;
+}
+
