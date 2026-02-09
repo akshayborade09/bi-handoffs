@@ -9,6 +9,7 @@ import { LeftDock } from "@/components/LeftDock";
 import { InspectorPanel } from "@/components/InspectorPanel";
 import { PreSignUpV1 } from "@/components/pages/PreSignUpV1";
 import { PreSignUpV2 } from "@/components/pages/PreSignUpV2";
+import { PreSignUpV3 } from "@/components/pages/PreSignUpV3";
 import { PostSignUpV1 } from "@/components/pages/PostSignUpV1";
 import { CommentProvider, useComments } from "@/contexts/CommentContext";
 import { CommentOverlay } from "@/components/CommentOverlay";
@@ -19,6 +20,7 @@ import { modules } from "@/data/modules";
 const PAGE_COMPONENTS: Record<string, React.ComponentType> = {
   "pre-signup-v1": PreSignUpV1,
   "pre-signup-v2": PreSignUpV2,
+  "pre-signup-v3": PreSignUpV3,
   "post-signup-v1": PostSignUpV1,
 };
 

@@ -22,7 +22,7 @@ export const modules: Module[] = [
     title: "Module 1: Pre/Post Sign Up Page",
     version: "1.0",
     subNav: [
-      { title: "Pre sign up", children: [{ label: "Version 1", pageId: "pre-signup-v1" }, { label: "Version 2", pageId: "pre-signup-v2" }] },
+      { title: "Pre sign up", children: [{ label: "Version 1", pageId: "pre-signup-v1" }, { label: "Version 2", pageId: "pre-signup-v2" }, { label: "Version 3", pageId: "pre-signup-v3" }] },
       { title: "Post sign up", children: [{ label: "Version 1", pageId: "post-signup-v1" }] },
     ],
   },
