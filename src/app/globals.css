@@ -21,6 +21,10 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   --font-instrument: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --breakpoint-desk-sm: 1080px;
+  --breakpoint-desk-md: 1280px;
+  --breakpoint-desk: 1440px;
+  --breakpoint-desk-lg: 1600px;
 }
 
 html {

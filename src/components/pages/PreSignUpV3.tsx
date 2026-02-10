@@ -20,10 +20,10 @@ function BondCard({
 }) {
   return (
     <div
-      className="bg-white rounded-[20px] shadow-[0px_4px_44px_0px_rgba(0,0,0,0.05)] p-3.5 flex flex-col gap-5 w-[374px]"
+      className="bg-white rounded-[12px] desk-sm:rounded-[14px] desk-md:rounded-[17px] desk:rounded-[20px] shadow-[0px_4px_44px_0px_rgba(0,0,0,0.05)] p-2 desk-sm:p-2.5 desk-md:p-3 desk:p-3.5 flex flex-col gap-2.5 desk-sm:gap-3 desk-md:gap-4 desk:gap-5 w-[210px] desk-sm:w-[230px] desk-md:w-[270px] desk:w-[300px] desk-lg:w-[340px]"
       style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
     >
-      <div className="bg-[#d1dadd] rounded-[16px] h-[187px] relative overflow-hidden">
+      <div className="bg-[#d1dadd] rounded-[9px] desk-sm:rounded-[11px] desk-md:rounded-[14px] desk:rounded-[16px] h-[100px] desk-sm:h-[115px] desk-md:h-[140px] desk:h-[150px] desk-lg:h-[170px] relative overflow-hidden">
         <p className="absolute bottom-8 left-3 text-[#126b89] font-semibold text-[15px] tracking-[-0.3px]">
           11.81% yearly
         </p>
@@ -246,18 +246,18 @@ function TestimonialsCarousel() {
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col">
       {/* Large index number */}
-      <div className="flex items-start gap-8 min-h-[260px]">
+      <div className="flex items-start gap-4 desk-sm:gap-6 desk-md:gap-7 desk:gap-8 min-h-[200px] desk-sm:min-h-[220px] desk-md:min-h-[235px] desk:min-h-[250px] desk-lg:min-h-[260px]">
         <span
-          className="text-[120px] font-light leading-none text-black/10 select-none transition-all duration-500 shrink-0"
-          style={{ fontFeatureSettings: '"tnum"', minWidth: "140px" }}
+          className="text-[72px] desk-sm:text-[90px] desk-md:text-[100px] desk:text-[110px] desk-lg:text-[120px] font-light leading-none text-black/10 select-none transition-all duration-500 shrink-0"
+          style={{ fontFeatureSettings: '"tnum"', minWidth: "80px" }}
         >
           {String(active + 1).padStart(2, "0")}
         </span>
 
-        <div className="flex-1 pt-6">
+        <div className="flex-1 pt-4 desk-md:pt-5 desk:pt-6">
           {/* Quote */}
           <blockquote
-            className={`text-2xl md:text-3xl font-light leading-relaxed text-black tracking-tight transition-all duration-300 min-h-[108px] ${
+            className={`text-xl desk-sm:text-2xl desk-md:text-[26px] desk:text-[28px] desk-lg:text-3xl font-light leading-relaxed text-black tracking-tight transition-all duration-300 min-h-[80px] desk-sm:min-h-[90px] desk-md:min-h-[96px] desk:min-h-[102px] desk-lg:min-h-[108px] ${
               isTransitioning
                 ? "opacity-0 translate-x-4"
                 : "opacity-100 translate-x-0"
@@ -552,13 +552,13 @@ export function PreSignUpV3() {
       divSectionRef.current && divCardRef.current && divContentRef.current;
 
     if (allRefsExist) {
-      // Side cards initial states
-      gsap.set(yieldCardRef.current, { opacity: 0.6, y: -200 });
-      gsap.set(tenureCardRef.current, { opacity: 0.6, y: 400 });
-      gsap.set(card3Ref.current, { opacity: 0.6, y: 1000 });
-      gsap.set(card4Ref.current, { opacity: 0.6, y: 1600 });
-      gsap.set(card5Ref.current, { opacity: 0.6, y: 2200 });
-      gsap.set(card6Ref.current, { opacity: 0.6, y: 2800 });
+      // Side cards initial states — hidden until scroll activates
+      gsap.set(yieldCardRef.current, { autoAlpha: 0, y: -200 });
+      gsap.set(tenureCardRef.current, { autoAlpha: 0, y: 400 });
+      gsap.set(card3Ref.current, { autoAlpha: 0, y: 1000 });
+      gsap.set(card4Ref.current, { autoAlpha: 0, y: 1600 });
+      gsap.set(card5Ref.current, { autoAlpha: 0, y: 2200 });
+      gsap.set(card6Ref.current, { autoAlpha: 0, y: 2800 });
 
       // Bonds section initial states
       gsap.set(bgOverlayRef.current, { opacity: 0 });
@@ -630,12 +630,10 @@ export function PreSignUpV3() {
         },
       });
 
-      // Phase 1: Mobile centers (0 → 0.18)
-      tl.fromTo(mobileRef.current,
-        { marginBottom: "-15%", y: 0 },
-        { marginBottom: "0%", y: -200, ease: "power1.out", duration: 0.18 },
-        0
-      );
+      // Phase 1: Mobile centers + section pt shrinks (0 → 0.18)
+      tl.to(mobileContainerRef.current, { paddingTop: 0, ease: "power1.out", duration: 0.18 }, 0);
+      tl.to(headingContainerRef.current!, { opacity: 0, height: 0, ease: "power1.out", duration: 0.14 }, 0);
+      tl.to(mobileRef.current, { scale: 0.85, ease: "power1.out", duration: 0.18 }, 0);
 
       // Phase 2: Pause (0.18 → 0.24)
       tl.to({}, { duration: 0.06 }, 0.18);
@@ -643,15 +641,21 @@ export function PreSignUpV3() {
       // Phase 3: Phone scroll + side cards (0.24 → 0.59)
       tl.to(appScrollRef.current, { y: -3500, ease: "none", duration: 0.35 }, 0.24);
       const MOVE_DISTANCE = 3400;
+      // Instantly show cards at full opacity when scroll starts
+      [yieldCardRef, tenureCardRef, card3Ref, card4Ref, card5Ref, card6Ref].forEach((ref) => {
+        tl.set(ref.current!, { autoAlpha: 1 }, 0.24);
+      });
+      // Move cards without opacity change
       [yieldCardRef, tenureCardRef, card3Ref, card4Ref, card5Ref, card6Ref].forEach((ref, i) => {
         const startY = [-200, 400, 1000, 1600, 2200, 2800][i];
-        tl.to(ref.current!, { y: startY - MOVE_DISTANCE, opacity: 1, ease: "none", duration: 0.35 }, 0.24);
+        tl.to(ref.current!, { y: startY - MOVE_DISTANCE, ease: "none", duration: 0.35 }, 0.24);
       });
 
       // Phase 4: Phone exits (0.59 → 0.63)
       tl.to(mobileRef.current, { y: -500, opacity: 0, ease: "power2.in", duration: 0.04 }, 0.59);
+      // Instantly hide cards — no fade
       [yieldCardRef, tenureCardRef, card3Ref, card4Ref, card5Ref, card6Ref].forEach((ref) => {
-        tl.to(ref.current!, { opacity: 0, ease: "power2.in", duration: 0.03 }, 0.59);
+        tl.set(ref.current!, { autoAlpha: 0 }, 0.62);
       });
       tl.to(bgPatternRef.current, { opacity: 0, duration: 0.04 }, 0.59);
       tl.to(bgOverlayRef.current, { opacity: 1, duration: 0.04 }, 0.59);
@@ -1073,33 +1077,33 @@ export function PreSignUpV3() {
         className="fixed inset-0 w-full h-full flex flex-col items-center justify-center z-[15] pointer-events-none invisible"
       >
         <div className="pointer-events-auto flex flex-col items-center gap-8">
-          <div className="text-center mb-10 relative h-[95px] w-full">
+          <div className="text-center mb-6 desk-md:mb-8 desk:mb-10 relative h-[70px] desk-sm:h-[80px] desk-md:h-[85px] desk:h-[90px] desk-lg:h-[95px] w-full">
             {/* YTM heading group */}
             <div ref={ytmTitleRef} className="absolute inset-x-0 top-0 flex flex-col items-center whitespace-nowrap">
-              <p className="text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
+              <p className="text-base desk-sm:text-lg desk-md:text-xl desk:text-[21px] desk-lg:text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
                 Bonds with highest
               </p>
-              <p className="text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
+              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #C57AFF 0%, #37035F 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Yield to Maturity
               </p>
             </div>
             {/* MP heading group */}
             <div ref={mpTitleRef} className="absolute inset-x-0 top-0 flex flex-col items-center whitespace-nowrap">
-              <p className="text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
+              <p className="text-base desk-sm:text-lg desk-md:text-xl desk:text-[21px] desk-lg:text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
                 Bonds with highest
               </p>
-              <p className="text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
+              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #2B5BDB 0%, #0C1C54 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Monthly Payouts
               </p>
             </div>
             {/* LT heading group */}
             <div ref={ltTitleRef} className="absolute inset-x-0 top-0 flex flex-col items-center whitespace-nowrap">
-              <p className="text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
+              <p className="text-base desk-sm:text-lg desk-md:text-xl desk:text-[21px] desk-lg:text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
                 Bonds with
               </p>
-              <p className="text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
+              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #E84393 0%, #6C1D45 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Lowest tenure
               </p>
@@ -1107,19 +1111,19 @@ export function PreSignUpV3() {
           </div>
 
           <div className="relative mb-10">
-            <div className="flex items-start justify-center gap-8">
+            <div className="flex items-start justify-center gap-3 desk-sm:gap-3.5 desk-md:gap-4 desk:gap-6 desk-lg:gap-8">
               <div ref={ytmC1}><BondCard badgeText="Highest YTM" badgeBg="bg-[#f2e2ff]" badgeTextColor="text-[#694189]" /></div>
               <div ref={ytmC2}><BondCard badgeText="Highest YTM" badgeBg="bg-[#f2e2ff]" badgeTextColor="text-[#694189]" /></div>
               <div ref={ytmC3}><BondCard badgeText="Highest YTM" badgeBg="bg-[#f2e2ff]" badgeTextColor="text-[#694189]" /></div>
               <div ref={ytmC4}><BondCard badgeText="Highest YTM" badgeBg="bg-[#f2e2ff]" badgeTextColor="text-[#694189]" /></div>
             </div>
-            <div className="absolute inset-0 flex items-start justify-center gap-8">
+            <div className="absolute inset-0 flex items-start justify-center gap-3 desk-sm:gap-3.5 desk-md:gap-4 desk:gap-6 desk-lg:gap-8">
               <div ref={mpC1}><BondCard badgeText="Monthly Payouts" badgeBg="bg-[#E2EAFF]" badgeTextColor="text-[#2B4899]" /></div>
               <div ref={mpC2}><BondCard badgeText="Monthly Payouts" badgeBg="bg-[#E2EAFF]" badgeTextColor="text-[#2B4899]" /></div>
               <div ref={mpC3}><BondCard badgeText="Monthly Payouts" badgeBg="bg-[#E2EAFF]" badgeTextColor="text-[#2B4899]" /></div>
               <div ref={mpC4}><BondCard badgeText="Monthly Payouts" badgeBg="bg-[#E2EAFF]" badgeTextColor="text-[#2B4899]" /></div>
             </div>
-            <div ref={ltCardsRef} className="absolute inset-0 flex items-start justify-center gap-8">
+            <div ref={ltCardsRef} className="absolute inset-0 flex items-start justify-center gap-3 desk-sm:gap-3.5 desk-md:gap-4 desk:gap-6 desk-lg:gap-8">
               <BondCard badgeText="Lowest Tenure" badgeBg="bg-[#FFE2EC]" badgeTextColor="text-[#8B2252]" />
               <BondCard badgeText="Lowest Tenure" badgeBg="bg-[#FFE2EC]" badgeTextColor="text-[#8B2252]" />
               <BondCard badgeText="Lowest Tenure" badgeBg="bg-[#FFE2EC]" badgeTextColor="text-[#8B2252]" />
@@ -1136,10 +1140,10 @@ export function PreSignUpV3() {
         className="fixed inset-0 w-full h-full z-[16] pointer-events-none invisible"
         style={{ opacity: 0 }}
       >
-        <div className="pointer-events-auto w-full h-full bg-white px-20 pt-24 pb-20 flex flex-col justify-center gap-6">
+        <div className="pointer-events-auto w-full h-full bg-white px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20 pt-32 desk-md:pt-24 desk:pt-48 desk-lg:pt-32 pb-6 desk-sm:pb-8 desk-md:pb-12 desk:pb-16 desk-lg:pb-20 flex flex-col justify-center gap-3 desk-sm:gap-4 desk-md:gap-5 desk:gap-6">
           {/* Heading */}
-          <div ref={nurtHeadingRef} className="mb-8">
-            <div className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black flex flex-col gap-1.5">
+          <div ref={nurtHeadingRef} className="mb-2 desk-sm:mb-3 desk-md:mb-2 desk:mb-3 desk-lg:mb-4">
+            <div className="text-3xl desk-sm:text-4xl desk-md:text-5xl desk:text-[56px] desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black flex flex-col gap-1.5">
               <p>&ldquo;Nurturing financial growth&rdquo;</p>
               <div className="flex gap-2 items-center">
                 <p>for 1 lakh+</p>
@@ -1159,17 +1163,17 @@ export function PreSignUpV3() {
           </div>
 
           {/* 4 Feature Cards */}
-          <div className="flex gap-5 items-stretch">
+          <div className="flex gap-3 desk-sm:gap-3.5 desk-md:gap-4 desk:gap-5 items-stretch">
             {FEATURE_CARDS.map((card, i) => (
               <div
                 key={card.title}
                 ref={[nurtCard1, nurtCard2, nurtCard3, nurtCard4][i]}
-                className="bg-gradient-to-b from-white to-[#eaf2f2] border border-[#d9f0f3] rounded-[20px] flex-1 overflow-hidden relative flex flex-col p-5 gap-8"
+                className="bg-gradient-to-b from-white to-[#eaf2f2] border border-[#d9f0f3] rounded-[14px] desk-sm:rounded-[16px] desk-md:rounded-[18px] desk:rounded-[20px] flex-1 overflow-hidden relative flex flex-col p-3 desk-sm:p-4 desk-md:p-5 gap-2 desk-sm:gap-3 desk-md:gap-4 desk:gap-6"
               >
                 {/* Title row with decorative brackets */}
                 <div className="flex gap-1 items-center">
                   <span
-                    className="text-[40px] leading-none font-normal"
+                    className="text-[20px] desk-sm:text-[24px] desk-md:text-[30px] desk:text-[37px] desk-lg:text-[40px] leading-none font-normal"
                     style={{
                       background: "linear-gradient(to bottom, #00f9ff, #003c3e)",
                       backgroundClip: "text",
@@ -1179,11 +1183,11 @@ export function PreSignUpV3() {
                   >
                     ‹
                   </span>
-                  <p className="text-3xl font-medium text-black tracking-[-0.48px] leading-[38px]">
+                  <p className="text-base desk-sm:text-lg desk-md:text-2xl desk:text-[28px] desk-lg:text-3xl font-medium text-black tracking-[-0.48px] leading-[1.3]">
                     {card.title}
                   </p>
                   <span
-                    className="text-[40px] leading-none font-normal"
+                    className="text-[20px] desk-sm:text-[24px] desk-md:text-[30px] desk:text-[37px] desk-lg:text-[40px] leading-none font-normal"
                     style={{
                       background: "linear-gradient(to bottom, #00f9ff, #003c3e)",
                       backgroundClip: "text",
@@ -1196,7 +1200,7 @@ export function PreSignUpV3() {
                 </div>
 
                 {/* Image */}
-                <div className="w-[320px] h-[320px] mt-6 mx-auto flex items-center justify-center">
+                <div className="w-[100px] h-[100px] desk-sm:w-[120px] desk-sm:h-[120px] desk-md:w-[160px] desk-md:h-[160px] desk:w-[220px] desk:h-[220px] desk-lg:w-[280px] desk-lg:h-[280px] mt-1 desk-sm:mt-2 desk-md:mt-3 desk:mt-4 mx-auto flex items-center justify-center">
                   <img
                     src={card.image}
                     alt={card.title}
@@ -1205,7 +1209,7 @@ export function PreSignUpV3() {
                 </div>
 
                 {/* Description */}
-                <p className="text-xl font-medium text-black tracking-[-0.36px] leading-[28px] mt-auto w-[254px]">
+                <p className="text-xs desk-sm:text-sm desk-md:text-base desk:text-lg desk-lg:text-xl font-medium text-black tracking-[-0.36px] leading-[1.4] mt-auto max-w-[254px]">
                   {card.description}
                 </p>
               </div>
@@ -1215,7 +1219,7 @@ export function PreSignUpV3() {
       </div>
 
       {/* Header */}
-      <header ref={headerRef} className="fixed top-0 left-0 right-0 bg-white px-32 py-6 z-50">
+      <header ref={headerRef} className="fixed top-0 left-0 right-0 bg-white px-8 desk-sm:px-16 desk-md:px-24 desk:px-28 desk-lg:px-32 py-6 z-50">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight text-black">BondsIndia</h1>
           <div className="flex items-center gap-6">
@@ -1237,56 +1241,56 @@ export function PreSignUpV3() {
       </header>
 
       {/* Hero Section with Mobile */}
-      <section ref={mobileContainerRef} className="relative px-32 pt-32 overflow-visible h-screen flex flex-col z-10">
-        <div ref={yieldCardRef} className="absolute right-40 top-1/2 z-10">
-          <img src="/version 3/yield.png" alt="Yield Card" className="w-[400px] h-auto" />
+      <section ref={mobileContainerRef} className="relative px-8 desk-sm:px-16 desk-md:px-24 desk:px-28 desk-lg:px-32 pt-28 overflow-visible h-screen flex flex-col z-10">
+        <div ref={yieldCardRef} className="absolute right-0 desk-sm:right-0 desk-md:right-4 desk:right-10 desk-lg:right-16 top-1/2 z-10 invisible">
+          <img src="/version 3/yield.png" alt="Yield Card" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
         </div>
-        <div ref={tenureCardRef} className="absolute left-40 top-1/2 z-10">
-          <img src="/version 3/tenure.png" alt="Tenure Card" className="w-[400px] h-auto" />
+        <div ref={tenureCardRef} className="absolute left-0 desk-sm:left-0 desk-md:left-4 desk:left-10 desk-lg:left-16 top-1/2 z-10 invisible">
+          <img src="/version 3/tenure.png" alt="Tenure Card" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
         </div>
-        <div ref={card3Ref} className="absolute right-40 top-1/2 z-10">
-          <img src="/version 3/payout.png" alt="Payout Card" className="w-[400px] h-auto" />
+        <div ref={card3Ref} className="absolute right-0 desk-sm:right-0 desk-md:right-4 desk:right-10 desk-lg:right-16 top-1/2 z-10 invisible">
+          <img src="/version 3/payout.png" alt="Payout Card" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
         </div>
-        <div ref={card4Ref} className="absolute left-40 top-1/2 z-10">
-          <img src="/version 3/yield.png" alt="Yield Card 2" className="w-[400px] h-auto" />
+        <div ref={card4Ref} className="absolute left-0 desk-sm:left-0 desk-md:left-4 desk:left-10 desk-lg:left-16 top-1/2 z-10 invisible">
+          <img src="/version 3/yield.png" alt="Yield Card 2" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
         </div>
-        <div ref={card5Ref} className="absolute right-40 top-1/2 z-10">
-          <img src="/version 3/tenure.png" alt="Tenure Card 2" className="w-[400px] h-auto" />
+        <div ref={card5Ref} className="absolute right-0 desk-sm:right-0 desk-md:right-4 desk:right-10 desk-lg:right-16 top-1/2 z-10 invisible">
+          <img src="/version 3/tenure.png" alt="Tenure Card 2" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
         </div>
-        <div ref={card6Ref} className="absolute left-40 top-1/2 z-10">
-          <img src="/version 3/payout.png" alt="Payout Card 2" className="w-[400px] h-auto" />
+        <div ref={card6Ref} className="absolute left-0 desk-sm:left-0 desk-md:left-4 desk:left-10 desk-lg:left-16 top-1/2 z-10 invisible">
+          <img src="/version 3/payout.png" alt="Payout Card 2" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
         </div>
 
         <div ref={headingContainerRef} className="flex flex-col items-center text-center">
           <div className="whitespace-nowrap">
             <ScrollReveal
               containerClassName="text-center"
-              textClassName="text-8xl font-medium leading-normal tracking-tighter text-black whitespace-nowrap"
+              textClassName="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-medium leading-tight tracking-tighter text-black whitespace-nowrap"
               baseOpacity={0.2} baseRotation={2} blurStrength={3}
             >
               Invest in bonds with
             </ScrollReveal>
           </div>
-          <div className="flex items-center justify-center gap-3 -mt-5">
-            <span className="text-8xl font-medium leading-normal tracking-tighter bg-gradient-to-b from-[#06C3C5] to-[#035E5F] bg-clip-text text-transparent"
+          <div className="flex items-center justify-center gap-3 mt-0">
+            <span className="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-medium leading-tight tracking-tighter bg-gradient-to-b from-[#06C3C5] to-[#035E5F] bg-clip-text text-transparent"
               style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               9-12%
             </span>
-            <span className="text-8xl font-medium leading-normal tracking-tighter text-black">fixed returns</span>
+            <span className="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-medium leading-tight tracking-tighter text-black">fixed returns</span>
           </div>
-          <div className="flex items-center justify-center gap-6 mt-8 mb-16">
-            <span className="text-xl font-medium text-black">SEBI Registered</span>
+          <div className="flex items-center justify-center gap-4 desk-md:gap-5 desk:gap-6 mt-2 desk-sm:mt-3 desk-md:mt-4 desk:mt-5 desk-lg:mt-6 mb-8 desk-sm:mb-10 desk-md:mb-12 desk:mb-14 desk-lg:mb-16">
+            <span className="text-base desk-md:text-lg desk:text-xl font-medium text-black">SEBI Registered</span>
             <img src="/version 3/star.svg" alt="" width="16" height="16" />
-            <span className="text-xl font-medium text-black">Invest as low as ₹1,000</span>
+            <span className="text-base desk-md:text-lg desk:text-xl font-medium text-black">Invest as low as ₹1,000</span>
             <img src="/version 3/star.svg" alt="" width="16" height="16" />
-            <span className="text-xl font-medium text-black">Zero brokerage</span>
+            <span className="text-base desk-md:text-lg desk:text-xl font-medium text-black">Zero brokerage</span>
           </div>
         </div>
 
-        <div className="flex-1 relative flex items-end justify-center">
-          <div ref={mobileRef} className="relative w-[390px] scale-[1.3]" style={{ marginBottom: "-15%" }}>
+        <div className="flex-1 relative flex items-center justify-center">
+          <div ref={mobileRef} className="relative w-[240px] desk-sm:w-[280px] desk-md:w-[320px] desk:w-[360px] desk-lg:w-[390px]">
             <img src="/version 3/mobile-frame.png" alt="Mobile Frame" className="w-full h-auto" />
-            <div className="absolute top-3 left-[14px] right-[14px] bottom-3 bg-white rounded-[45px] overflow-hidden">
+            <div className="absolute top-2 left-2.5 right-2.5 bottom-2 desk-sm:top-2.5 desk-sm:left-3 desk-sm:right-3 desk-sm:bottom-2.5 desk-md:top-3 desk-md:left-[14px] desk-md:right-[14px] desk-md:bottom-3 bg-white rounded-[30px] desk-sm:rounded-[35px] desk-md:rounded-[40px] desk:rounded-[42px] desk-lg:rounded-[45px] overflow-hidden">
               <img ref={appScrollRef} src="/version 3/app-scroll.png" alt="App Content" className="w-full" />
               <img src="/version 3/top-status.png" alt="Status Bar" className="w-full absolute top-0 left-0 right-0 z-10" />
             </div>
@@ -1305,10 +1309,10 @@ export function PreSignUpV3() {
         ref={howItWorksOverlayRef}
         className="fixed inset-0 w-full h-full z-[20] pointer-events-none invisible"
       >
-        <div className="pointer-events-auto w-full h-full bg-white px-[72px] flex flex-col pt-32">
+        <div className="pointer-events-auto w-full h-full bg-white px-8 desk-sm:px-12 desk-md:px-14 desk:px-16 desk-lg:px-[72px] flex flex-col pt-24 desk-md:pt-28 desk:pt-32">
           {/* Heading — persists across all 4 panels */}
-          <div ref={hiwHeadingRef} className="mb-10">
-            <p className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black">
+          <div ref={hiwHeadingRef} className="mb-6 desk-md:mb-8 desk:mb-10">
+            <p className="text-4xl desk-sm:text-5xl desk-md:text-[56px] desk:text-[60px] desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black">
               How this works?
             </p>
           </div>
@@ -1316,13 +1320,13 @@ export function PreSignUpV3() {
           {/* Stacked panels — each absolutely positioned, fills remaining viewport height */}
           <div ref={hiwPanelContainerRef} className="relative flex-1 overflow-hidden">
             {/* Panel 1: Create Your Account — text left, phone right */}
-            <div ref={hiwPanel1Ref} className="absolute inset-x-0 h-[85%] flex gap-10">
+            <div ref={hiwPanel1Ref} className="absolute inset-x-0 h-[70%] desk-sm:h-[75%] desk-md:h-[80%] desk:h-[85%] flex gap-4 desk-sm:gap-6 desk-md:gap-8 desk:gap-9 desk-lg:gap-10">
               <div className="bg-[#f3f3f3] border border-[#f3f3f3] rounded-[20px] flex-1 h-full flex items-center overflow-hidden">
-                <div className="pl-20 w-[497px] flex flex-col gap-6">
-                  <p className="text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
+                <div className="pl-8 desk-sm:pl-12 desk-md:pl-16 desk:pl-18 desk-lg:pl-20 max-w-[320px] desk-sm:max-w-[380px] desk-md:max-w-[440px] desk:max-w-[470px] desk-lg:max-w-[497px] flex flex-col gap-4 desk-md:gap-5 desk:gap-6">
+                  <p className="text-[28px] desk-sm:text-[34px] desk-md:text-[40px] desk:text-[44px] desk-lg:text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
                     Create Your Account
                   </p>
-                  <p className="text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[34px]">
+                  <p className="text-base desk-md:text-lg desk:text-[19px] desk-lg:text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[1.7]">
                     Join 1 lakh+ investors. Sign up in minutes with basic details and complete your securely encrypted KYC process to get started.
                   </p>
                 </div>
@@ -1333,16 +1337,16 @@ export function PreSignUpV3() {
             </div>
 
             {/* Panel 2: Explore & Choose — phone left, text right */}
-            <div ref={hiwPanel2Ref} className="absolute inset-x-0 h-[85%] flex gap-10">
+            <div ref={hiwPanel2Ref} className="absolute inset-x-0 h-[70%] desk-sm:h-[75%] desk-md:h-[80%] desk:h-[85%] flex gap-4 desk-sm:gap-6 desk-md:gap-8 desk:gap-9 desk-lg:gap-10">
               <div className="rounded-[20px] flex-1 h-full overflow-hidden bg-[#FBFBFB]">
                 <img src="/version 3/explore-choose.png" alt="Explore & Choose" className="w-full h-full object-cover" />
               </div>
               <div className="bg-[#f3f3f3] border border-[#f3f3f3] rounded-[20px] flex-1 h-full flex items-center overflow-hidden">
-                <div className="pl-20 w-[497px] flex flex-col gap-6">
-                  <p className="text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
+                <div className="pl-8 desk-sm:pl-12 desk-md:pl-16 desk:pl-18 desk-lg:pl-20 max-w-[320px] desk-sm:max-w-[380px] desk-md:max-w-[440px] desk:max-w-[470px] desk-lg:max-w-[497px] flex flex-col gap-4 desk-md:gap-5 desk:gap-6">
+                  <p className="text-[28px] desk-sm:text-[34px] desk-md:text-[40px] desk:text-[44px] desk-lg:text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
                     Explore &amp; Choose
                   </p>
-                  <p className="text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[34px]">
+                  <p className="text-base desk-md:text-lg desk:text-[19px] desk-lg:text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[1.7]">
                     Browse through our curated collection of Govt, State Govt, and Corporate bonds. Filter by tenure, yield, and risk appetite.
                   </p>
                 </div>
@@ -1350,13 +1354,13 @@ export function PreSignUpV3() {
             </div>
 
             {/* Panel 3: Invest & Earn — text left, phone right */}
-            <div ref={hiwPanel3Ref} className="absolute inset-x-0 h-[85%] flex gap-10">
+            <div ref={hiwPanel3Ref} className="absolute inset-x-0 h-[70%] desk-sm:h-[75%] desk-md:h-[80%] desk:h-[85%] flex gap-4 desk-sm:gap-6 desk-md:gap-8 desk:gap-9 desk-lg:gap-10">
               <div className="bg-[#f3f3f3] border border-[#f3f3f3] rounded-[20px] flex-1 h-full flex items-center overflow-hidden">
-                <div className="pl-20 w-[497px] flex flex-col gap-6">
-                  <p className="text-[48px] font-normal tracking-[-0.96px] text-black leading-normal whitespace-pre-wrap">
+                <div className="pl-8 desk-sm:pl-12 desk-md:pl-16 desk:pl-18 desk-lg:pl-20 max-w-[320px] desk-sm:max-w-[380px] desk-md:max-w-[440px] desk:max-w-[470px] desk-lg:max-w-[497px] flex flex-col gap-4 desk-md:gap-5 desk:gap-6">
+                  <p className="text-[28px] desk-sm:text-[34px] desk-md:text-[40px] desk:text-[44px] desk-lg:text-[48px] font-normal tracking-[-0.96px] text-black leading-normal whitespace-pre-wrap">
                     {"Invest &\nEarn"}
                   </p>
-                  <p className="text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[34px]">
+                  <p className="text-base desk-md:text-lg desk:text-[19px] desk-lg:text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[1.7]">
                     Complete your investment via UPI or Net Banking. Sit back and watch your wealth grow with predictable, timely returns.
                   </p>
                 </div>
@@ -1367,16 +1371,16 @@ export function PreSignUpV3() {
             </div>
 
             {/* Panel 4: Download the app — phone left, text right */}
-            <div ref={hiwPanel4Ref} className="absolute inset-x-0 h-[85%] flex gap-10">
+            <div ref={hiwPanel4Ref} className="absolute inset-x-0 h-[70%] desk-sm:h-[75%] desk-md:h-[80%] desk:h-[85%] flex gap-4 desk-sm:gap-6 desk-md:gap-8 desk:gap-9 desk-lg:gap-10">
               <div className="rounded-[20px] flex-1 h-full overflow-hidden bg-[#FBFBFB]">
                 <img src="/version 3/download app.png" alt="Download App" className="w-full h-full object-cover object-top" />
               </div>
               <div className="bg-[#f3f3f3] border border-[#f3f3f3] rounded-[20px] flex-1 h-full flex items-center overflow-hidden">
-                <div className="mx-auto w-[484px] flex flex-col gap-8">
-                  <p className="text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
+                <div className="mx-auto max-w-[320px] desk-sm:max-w-[380px] desk-md:max-w-[440px] desk:max-w-[464px] desk-lg:max-w-[484px] flex flex-col gap-6 desk-md:gap-7 desk:gap-8">
+                  <p className="text-[28px] desk-sm:text-[34px] desk-md:text-[40px] desk:text-[44px] desk-lg:text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
                     Expand your investment portfolio for better returns today!
                   </p>
-                  <button className="bg-black text-white font-medium text-[24px] tracking-[-0.48px] px-5 py-[19px] rounded-lg flex items-center gap-2.5 w-fit">
+                  <button className="bg-black text-white font-medium text-lg desk-md:text-xl desk:text-[22px] desk-lg:text-[24px] tracking-[-0.48px] px-4 desk-md:px-5 py-3 desk-md:py-4 desk:py-[19px] rounded-lg flex items-center gap-2.5 w-fit">
                     Download the app
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -1399,34 +1403,34 @@ export function PreSignUpV3() {
         ref={bfeSectionRef}
         className="fixed inset-0 w-full h-full z-[25] pointer-events-none invisible"
       >
-        <div className="pointer-events-auto w-full h-full bg-white flex flex-col items-center justify-center px-20">
+        <div className="pointer-events-auto w-full h-full bg-white flex flex-col items-center justify-center pt-20 desk-md:pt-24 px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20">
           {/* Heading */}
-          <div ref={bfeHeadingRef} className="flex flex-col items-center gap-3 mb-[70px]">
-            <p className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black text-center">
+          <div ref={bfeHeadingRef} className="flex flex-col items-center gap-2 desk-md:gap-3 mb-10 desk-sm:mb-12 desk-md:mb-[60px] desk:mb-[65px] desk-lg:mb-[70px]">
+            <p className="text-4xl desk-sm:text-5xl desk-md:text-[56px] desk:text-[60px] desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black text-center">
               Bond&apos;s are for everyone
             </p>
-            <p className="text-[24px] font-normal tracking-[-0.48px] text-black text-center">
+            <p className="text-lg desk-md:text-xl desk:text-[22px] desk-lg:text-[24px] font-normal tracking-[-0.48px] text-black text-center">
               From short term to long, from govt to corporate, we have got it all
             </p>
           </div>
 
           {/* 3 Cards */}
-          <div className="flex gap-10 items-start w-full max-w-[1220px]">
+          <div className="flex gap-6 desk-sm:gap-7 desk-md:gap-8 desk:gap-9 desk-lg:gap-10 items-start w-full max-w-[900px] desk-sm:max-w-[1000px] desk-md:max-w-[1100px] desk:max-w-[1160px] desk-lg:max-w-[1220px]">
             {BONDS_FOR_EVERYONE_CARDS.map((card, i) => (
               <div
                 key={card.title}
                 ref={[bfeCard1, bfeCard2, bfeCard3][i]}
-                className="flex flex-col gap-[30px] items-start w-[380px]"
+                className="flex flex-col gap-5 desk-md:gap-[30px] items-start flex-1"
               >
                 {/* Placeholder image */}
-                <div className="bg-[#d9d9d9] rounded-[40px] w-[200px] h-[200px] shrink-0" />
+                <div className="bg-[#d9d9d9] rounded-[28px] desk-md:rounded-[34px] desk:rounded-[40px] w-[140px] h-[140px] desk-sm:w-[160px] desk-sm:h-[160px] desk-md:w-[180px] desk-md:h-[180px] desk:w-[190px] desk:h-[190px] desk-lg:w-[200px] desk-lg:h-[200px] shrink-0" />
 
                 {/* Text content */}
-                <div className="flex flex-col gap-5 w-full">
-                  <p className="text-[24px] font-normal tracking-[-0.48px] text-black leading-normal">
+                <div className="flex flex-col gap-3 desk-md:gap-5 w-full">
+                  <p className="text-lg desk-sm:text-xl desk-md:text-[22px] desk:text-[23px] desk-lg:text-[24px] font-normal tracking-[-0.48px] text-black leading-normal">
                     {card.title}
                   </p>
-                  <p className="text-[18px] font-normal tracking-[-0.36px] text-black/70 leading-[24px]">
+                  <p className="text-sm desk-sm:text-base desk-md:text-[17px] desk:text-[17px] desk-lg:text-[18px] font-normal tracking-[-0.36px] text-black/70 leading-[1.5]">
                     {card.description}
                   </p>
                 </div>
@@ -1444,16 +1448,16 @@ export function PreSignUpV3() {
         ref={testimSectionRef}
         className="fixed inset-0 w-full h-full z-[30] pointer-events-none invisible"
       >
-        <div className="pointer-events-auto w-full h-full bg-white flex flex-col items-center justify-center px-20">
+        <div className="pointer-events-auto w-full h-full bg-white flex flex-col items-center justify-center pt-20 desk-md:pt-24 px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20">
           {/* Heading */}
-          <div ref={testimHeadingRef} className="mb-16">
-            <p className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black text-center">
+          <div ref={testimHeadingRef} className="mb-10 desk-md:mb-12 desk:mb-14 desk-lg:mb-16">
+            <p className="text-4xl desk-sm:text-5xl desk-md:text-[56px] desk:text-[60px] desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black text-center">
               What our users are saying
             </p>
           </div>
 
           {/* Carousel */}
-          <div ref={testimContentRef}>
+          <div ref={testimContentRef} className="w-full max-w-[700px] desk-md:max-w-[800px] desk:max-w-[850px] desk-lg:max-w-[900px]">
             <TestimonialsCarousel />
           </div>
         </div>
@@ -1468,19 +1472,19 @@ export function PreSignUpV3() {
         className="fixed inset-0 w-full h-full z-[35] pointer-events-none invisible"
       >
         <div
-          className="pointer-events-auto w-full h-full bg-white flex items-center justify-center px-20"
+          className="pointer-events-auto w-full h-full bg-white flex items-center justify-center pt-20 desk-md:pt-24 px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20"
           style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
         >
-          <div className="flex gap-20 items-start w-full max-w-[1220px]">
+          <div className="flex gap-10 desk-sm:gap-12 desk-md:gap-16 desk:gap-18 desk-lg:gap-20 items-start w-full max-w-[900px] desk-sm:max-w-[1000px] desk-md:max-w-[1100px] desk:max-w-[1160px] desk-lg:max-w-[1220px]">
             {/* Left column — heading + subtitle + support link */}
-            <div ref={faqHeadingRef} className="w-[340px] shrink-0">
-              <p className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black">
+            <div ref={faqHeadingRef} className="w-[240px] desk-sm:w-[280px] desk-md:w-[310px] desk:w-[325px] desk-lg:w-[340px] shrink-0">
+              <p className="text-4xl desk-sm:text-5xl desk-md:text-[56px] desk:text-[60px] desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black">
                 FAQs
               </p>
-              <p className="text-[16px] font-normal tracking-[-0.32px] text-black/50 mt-3 leading-relaxed">
+              <p className="text-sm desk-md:text-[16px] font-normal tracking-[-0.32px] text-black/50 mt-3 leading-relaxed">
                 Your questions answered
               </p>
-              <p className="text-[15px] font-normal tracking-[-0.3px] text-black/50 mt-8 leading-relaxed">
+              <p className="text-sm desk-md:text-[15px] font-normal tracking-[-0.3px] text-black/50 mt-6 desk-md:mt-8 leading-relaxed">
                 Can&apos;t find what you&apos;re looking for?{" "}
                 Contact our{" "}
                 <a
@@ -1532,18 +1536,18 @@ export function PreSignUpV3() {
             {/* Content */}
             <div
               ref={divContentRef}
-              className="relative z-10 flex flex-col items-center text-center px-[196px] py-[100px] gap-[52px]"
+              className="relative z-10 flex flex-col items-center text-center px-8 desk-sm:px-20 desk-md:px-[120px] desk:px-[160px] desk-lg:px-[196px] py-16 desk-md:py-20 desk:py-[100px] gap-8 desk-md:gap-10 desk:gap-[52px]"
             >
-              <div className="flex flex-col gap-[22px] items-center">
-                <p className="text-[56px] font-normal tracking-[-1.12px] text-white leading-[1.2]">
+              <div className="flex flex-col gap-4 desk-md:gap-5 desk:gap-[22px] items-center">
+                <p className="text-3xl desk-sm:text-4xl desk-md:text-[44px] desk:text-[52px] desk-lg:text-[56px] font-normal tracking-[-1.12px] text-white leading-[1.2]">
                   Ready to diversify your investments?
                 </p>
-                <p className="text-[24px] font-normal tracking-[-0.48px] text-white/60">
+                <p className="text-base desk-sm:text-lg desk-md:text-xl desk:text-[22px] desk-lg:text-[24px] font-normal tracking-[-0.48px] text-white/60">
                   It&apos;s never wise to keep all your investments in the same
                   basket
                 </p>
               </div>
-              <button className="bg-[#3be2e4] text-black font-medium text-[24px] tracking-[-0.48px] px-5 py-[19px] rounded-lg flex items-center gap-2.5 transition-all hover:bg-[#2dd1d3]">
+              <button className="bg-[#3be2e4] text-black font-medium text-lg desk-md:text-xl desk:text-[22px] desk-lg:text-[24px] tracking-[-0.48px] px-4 desk-md:px-5 py-3 desk-md:py-4 desk:py-[19px] rounded-lg flex items-center gap-2.5 transition-all hover:bg-[#2dd1d3]">
                 Show all bonds
                 <svg
                   width="24"
