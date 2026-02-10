@@ -433,9 +433,9 @@ export function PreSignUpV3() {
   const bgOverlayRef = useRef<HTMLDivElement>(null);
   const bondsSectionRef = useRef<HTMLDivElement>(null);
 
-  const ytmTitleRef = useRef<HTMLParagraphElement>(null);
-  const mpTitleRef = useRef<HTMLParagraphElement>(null);
-  const ltTitleRef = useRef<HTMLParagraphElement>(null);
+  const ytmTitleRef = useRef<HTMLDivElement>(null);
+  const mpTitleRef = useRef<HTMLDivElement>(null);
+  const ltTitleRef = useRef<HTMLDivElement>(null);
 
   const ytmC1 = useRef<HTMLDivElement>(null);
   const ytmC2 = useRef<HTMLDivElement>(null);
@@ -1072,21 +1072,34 @@ export function PreSignUpV3() {
         ref={bondsSectionRef}
         className="fixed inset-0 w-full h-full flex flex-col items-center justify-center z-[15] pointer-events-none invisible"
       >
-        <div className="pointer-events-auto flex flex-col items-center">
-          <div className="text-center mb-10">
-            <p className="text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
-              Bonds with highest
-            </p>
-            <div className="relative h-[60px]">
-              <p ref={ytmTitleRef} className="text-[48px] font-medium tracking-[-0.96px] absolute inset-0"
+        <div className="pointer-events-auto flex flex-col items-center gap-8">
+          <div className="text-center mb-10 relative h-[95px] w-full">
+            {/* YTM heading group */}
+            <div ref={ytmTitleRef} className="absolute inset-x-0 top-0 flex flex-col items-center whitespace-nowrap">
+              <p className="text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
+                Bonds with highest
+              </p>
+              <p className="text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #C57AFF 0%, #37035F 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Yield to Maturity
               </p>
-              <p ref={mpTitleRef} className="text-[48px] font-medium tracking-[-0.96px] absolute inset-0"
+            </div>
+            {/* MP heading group */}
+            <div ref={mpTitleRef} className="absolute inset-x-0 top-0 flex flex-col items-center whitespace-nowrap">
+              <p className="text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
+                Bonds with highest
+              </p>
+              <p className="text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #2B5BDB 0%, #0C1C54 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Monthly Payouts
               </p>
-              <p ref={ltTitleRef} className="text-[48px] font-medium tracking-[-0.96px] absolute inset-0"
+            </div>
+            {/* LT heading group */}
+            <div ref={ltTitleRef} className="absolute inset-x-0 top-0 flex flex-col items-center whitespace-nowrap">
+              <p className="text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
+                Bonds with
+              </p>
+              <p className="text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #E84393 0%, #6C1D45 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Lowest tenure
               </p>
