@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
+// next/image import removed — using native <img> for external URLs
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -274,11 +274,10 @@ function TestimonialsCarousel() {
           >
             <div className="flex items-center gap-4">
               <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-black/10 group-hover:ring-black/30 transition-all duration-300">
-                <Image
+                <img
                   src={current.image}
                   alt={current.author}
-                  fill
-                  className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                 />
               </div>
               <div>
