@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import ScrollReveal from "@/components/ScrollReveal";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -18,10 +20,10 @@ function BondCard({
 }) {
   return (
     <div
-      className="bg-white rounded-[14px] shadow-[0px_4px_44px_0px_rgba(0,0,0,0.05)] p-2.5 flex flex-col gap-4 w-[260px]"
+      className="bg-white rounded-[20px] shadow-[0px_4px_44px_0px_rgba(0,0,0,0.05)] p-3.5 flex flex-col gap-5 w-[374px]"
       style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
     >
-      <div className="bg-[#d1dadd] rounded-[11px] h-[130px] relative overflow-hidden">
+      <div className="bg-[#d1dadd] rounded-[16px] h-[187px] relative overflow-hidden">
         <p className="absolute bottom-8 left-3 text-[#126b89] font-semibold text-[15px] tracking-[-0.3px]">
           11.81% yearly
         </p>
@@ -57,6 +59,288 @@ function BondCard({
   );
 }
 
+const FAQ_ITEMS = [
+  {
+    id: "item-1",
+    question: "What are bonds and how do they work?",
+    answer:
+      "Bonds are fixed-income instruments where you lend money to a government or corporation in exchange for regular interest payments and return of principal at maturity. They offer predictable returns ranging from 7-12% depending on the issuer and tenure.",
+  },
+  {
+    id: "item-2",
+    question: "What is the minimum investment amount?",
+    answer:
+      "You can start investing in bonds with as little as ₹1,000 on our platform. Some government securities and corporate bonds may have higher minimums depending on the issue, but we ensure accessible options for every investor.",
+  },
+  {
+    id: "item-3",
+    question: "Are my investments safe on BondsIndia?",
+    answer:
+      "BondsIndia is SEBI registered and all transactions are processed through secure, encrypted payment gateways. Government bonds carry sovereign guarantee, while corporate bonds are rated by agencies like CRISIL and ICRA to help you assess risk.",
+  },
+  {
+    id: "item-4",
+    question: "How do I receive my interest payouts?",
+    answer:
+      "Interest payouts are credited directly to your registered bank account. Depending on the bond, payouts can be monthly, quarterly, semi-annual, or at maturity. You can filter bonds by payout frequency on our platform.",
+  },
+  {
+    id: "item-5",
+    question: "Can I sell my bonds before maturity?",
+    answer:
+      "Yes, most bonds listed on our platform can be sold in the secondary market before maturity. Liquidity varies by bond type — government securities typically have higher liquidity than corporate bonds.",
+  },
+];
+
+function FAQAccordion() {
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const toggle = (id: string) => {
+    setOpenId((prev) => (prev === id ? null : id));
+  };
+
+  return (
+    <div className="w-full divide-y divide-dotted divide-black/10">
+      {FAQ_ITEMS.map((item) => (
+        <div key={item.id}>
+          <button
+            onClick={() => toggle(item.id)}
+            className="w-full flex items-center justify-between py-5 text-left cursor-pointer group"
+          >
+            <span className="text-base font-medium text-black group-hover:text-black/70 transition-colors">
+              {item.question}
+            </span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              className={`shrink-0 ml-4 text-black/40 transition-transform duration-300 ${
+                openId === item.id ? "rotate-180" : ""
+              }`}
+            >
+              <path
+                d="M4 6L8 10L12 6"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <div
+            className={`grid transition-all duration-300 ease-in-out ${
+              openId === item.id
+                ? "grid-rows-[1fr] opacity-100 pb-5"
+                : "grid-rows-[0fr] opacity-0"
+            }`}
+          >
+            <div className="overflow-hidden">
+              <p className="text-base text-black/60 leading-relaxed">
+                {item.answer}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+const TESTIMONIALS = [
+  {
+    id: 1,
+    quote:
+      "The attention to detail and creative vision transformed our brand identity completely.",
+    author: "Sarah Chen",
+    role: "Creative Director",
+    company: "Studio Forma",
+    image:
+      "https://plus.unsplash.com/premium_photo-1689551671548-79ff30459d2a?w=900&auto=format&fit=crop&q=60",
+  },
+  {
+    id: 2,
+    quote:
+      "Working with them felt like a true creative partnership from day one.",
+    author: "Marcus Webb",
+    role: "Head of Design",
+    company: "Minimal Co",
+    image:
+      "https://images.unsplash.com/photo-1649123245135-4db6ead931b5?w=900&auto=format&fit=crop&q=60",
+  },
+  {
+    id: 3,
+    quote:
+      "They understand that great design is invisible yet unforgettable.",
+    author: "Elena Voss",
+    role: "Art Director",
+    company: "Pixel & Co",
+    image:
+      "https://images.unsplash.com/photo-1701615004837-40d8573b6652?w=900&auto=format&fit=crop&q=60",
+  },
+];
+
+// Module-level reset function for the testimonials carousel
+let resetTestimonialsCarousel: (() => void) | null = null;
+
+function TestimonialsCarousel() {
+  const [active, setActive] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const resetTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setActive((prev) =>
+          prev === TESTIMONIALS.length - 1 ? 0 : prev + 1
+        );
+        setTimeout(() => setIsTransitioning(false), 50);
+      }, 300);
+    }, 5000);
+  }, []);
+
+  // Expose reset to module scope
+  useEffect(() => {
+    resetTestimonialsCarousel = () => {
+      setActive(0);
+      setIsTransitioning(false);
+      resetTimer();
+    };
+    return () => {
+      resetTestimonialsCarousel = null;
+    };
+  }, [resetTimer]);
+
+  // Start auto-play on mount
+  useEffect(() => {
+    resetTimer();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, [resetTimer]);
+
+  const handleChange = (index: number) => {
+    if (index === active || isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActive(index);
+      setTimeout(() => setIsTransitioning(false), 50);
+    }, 300);
+    resetTimer(); // restart timer on manual interaction
+  };
+
+  const handlePrev = () => {
+    const newIndex = active === 0 ? TESTIMONIALS.length - 1 : active - 1;
+    handleChange(newIndex);
+  };
+
+  const handleNext = () => {
+    const newIndex = active === TESTIMONIALS.length - 1 ? 0 : active + 1;
+    handleChange(newIndex);
+  };
+
+  const current = TESTIMONIALS[active];
+
+  return (
+    <div className="w-full max-w-2xl mx-auto flex flex-col">
+      {/* Large index number */}
+      <div className="flex items-start gap-8 min-h-[260px]">
+        <span
+          className="text-[120px] font-light leading-none text-black/10 select-none transition-all duration-500 shrink-0"
+          style={{ fontFeatureSettings: '"tnum"', minWidth: "140px" }}
+        >
+          {String(active + 1).padStart(2, "0")}
+        </span>
+
+        <div className="flex-1 pt-6">
+          {/* Quote */}
+          <blockquote
+            className={`text-2xl md:text-3xl font-light leading-relaxed text-black tracking-tight transition-all duration-300 min-h-[108px] ${
+              isTransitioning
+                ? "opacity-0 translate-x-4"
+                : "opacity-100 translate-x-0"
+            }`}
+          >
+            {current.quote}
+          </blockquote>
+
+          {/* Author info */}
+          <div
+            className={`mt-10 group cursor-default transition-all duration-300 delay-100 ${
+              isTransitioning ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            <div className="flex items-center gap-4">
+              <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-black/10 group-hover:ring-black/30 transition-all duration-300">
+                <Image
+                  src={current.image}
+                  alt={current.author}
+                  fill
+                  className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                />
+              </div>
+              <div>
+                <p className="font-medium text-black">{current.author}</p>
+                <p className="text-sm text-black/60">
+                  {current.role}
+                  <span className="mx-2 text-black/20">/</span>
+                  <span className="group-hover:text-black transition-colors duration-300">
+                    {current.company}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div className="mt-16 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-3">
+            {TESTIMONIALS.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleChange(index)}
+                className="group relative py-4"
+              >
+                <span
+                  className={`block h-px transition-all duration-500 ease-out ${
+                    index === active
+                      ? "w-12 bg-black"
+                      : "w-6 bg-black/20 group-hover:w-8 group-hover:bg-black/40"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+          <span className="text-xs text-black/60 tracking-widest uppercase">
+            {String(active + 1).padStart(2, "0")} /{" "}
+            {String(TESTIMONIALS.length).padStart(2, "0")}
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handlePrev}
+            className="p-2 rounded-full text-black/40 hover:text-black hover:bg-black/5 transition-all duration-300"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            onClick={handleNext}
+            className="p-2 rounded-full text-black/40 hover:text-black hover:bg-black/5 transition-all duration-300"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const FEATURE_CARDS = [
   {
     title: "Zero Brokerage",
@@ -77,6 +361,58 @@ const FEATURE_CARDS = [
     title: "Secured Payment",
     image: "/seecured.png",
     description: "Transact with confidence using our secure, encrypted payment gateways.",
+  },
+];
+
+const BONDS_FOR_EVERYONE_CARDS = [
+  {
+    title: "Start small with ₹1,000",
+    description:
+      "Starting small? Start small, learn via investing and build appetite for bonds.",
+  },
+  {
+    title: "Choose tenure as per your need",
+    description:
+      "Start as low as 1 year tenure or choose to stay put for up to 5 years.",
+  },
+  {
+    title: "Choose from 100+ bonds",
+    description:
+      "Choose from Govt of Govt, State Govt to Corporate, PSUs and SLUs bonds.",
+  },
+];
+
+const HOW_IT_WORKS_SECTIONS = [
+  {
+    title: "Create Your Account",
+    description:
+      "Join 1 lakh+ investors. Sign up in minutes with basic details and complete your securely encrypted KYC process to get started.",
+    image: "/version 3/create-account.png",
+    imageFirst: false,
+    cta: false,
+  },
+  {
+    title: "Explore & Choose",
+    description:
+      "Browse through our curated collection of Govt, State Govt, and Corporate bonds. Filter by tenure, yield, and risk appetite.",
+    image: "/version 3/explore-choose.png",
+    imageFirst: true,
+    cta: false,
+  },
+  {
+    title: "Invest &\nEarn",
+    description:
+      "Complete your investment via UPI or Net Banking. Sit back and watch your wealth grow with predictable, timely returns.",
+    image: "/version 3/invest-earn.png",
+    imageFirst: false,
+    cta: false,
+  },
+  {
+    title: "Expand your investment portfolio for better returns today!",
+    description: "",
+    image: "/version 3/download app.png",
+    imageFirst: true,
+    cta: true,
   },
 ];
 
@@ -122,15 +458,57 @@ export function PreSignUpV3() {
   const nurtCard4 = useRef<HTMLDivElement>(null);
   const nurtHeadingRef = useRef<HTMLDivElement>(null);
 
+  // How It Works section refs
+  const hiwEntranceTriggerRef = useRef<HTMLDivElement>(null);
+  const hiwTrigger2Ref = useRef<HTMLDivElement>(null);
+  const hiwTrigger3Ref = useRef<HTMLDivElement>(null);
+  const hiwTrigger4Ref = useRef<HTMLDivElement>(null);
+  const howItWorksOverlayRef = useRef<HTMLDivElement>(null);
+  const hiwHeadingRef = useRef<HTMLDivElement>(null);
+  const hiwPanel1Ref = useRef<HTMLDivElement>(null);
+  const hiwPanel2Ref = useRef<HTMLDivElement>(null);
+  const hiwPanel3Ref = useRef<HTMLDivElement>(null);
+  const hiwPanel4Ref = useRef<HTMLDivElement>(null);
+  const hiwPanelContainerRef = useRef<HTMLDivElement>(null);
+
+  // Bonds for Everyone section refs
+  const bfeTriggerRef = useRef<HTMLDivElement>(null);
+  const bfeSectionRef = useRef<HTMLDivElement>(null);
+  const bfeHeadingRef = useRef<HTMLDivElement>(null);
+  const bfeCard1 = useRef<HTMLDivElement>(null);
+  const bfeCard2 = useRef<HTMLDivElement>(null);
+  const bfeCard3 = useRef<HTMLDivElement>(null);
+
+  // Testimonials section refs
+  const testimTriggerRef = useRef<HTMLDivElement>(null);
+  const testimSectionRef = useRef<HTMLDivElement>(null);
+  const testimHeadingRef = useRef<HTMLDivElement>(null);
+  const testimContentRef = useRef<HTMLDivElement>(null);
+
+  // FAQ section refs
+  const faqTriggerRef = useRef<HTMLDivElement>(null);
+  const faqSectionRef = useRef<HTMLDivElement>(null);
+  const faqHeadingRef = useRef<HTMLDivElement>(null);
+  const faqContentRef = useRef<HTMLDivElement>(null);
+
+  // Diversify CTA section refs
+  const divTrigger1Ref = useRef<HTMLDivElement>(null); // FAQ → card entrance
+  const divTrigger2Ref = useRef<HTMLDivElement>(null); // card → fullscreen
+  const divSectionRef = useRef<HTMLDivElement>(null);
+  const divCardRef = useRef<HTMLDivElement>(null);
+  const divContentRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     let lastScroll = 0;
     const handleScroll = () => {
       const currentScroll = window.scrollY;
       if (headerRef.current) {
         if (currentScroll > lastScroll && currentScroll > 100) {
-          gsap.to(headerRef.current, { y: -100, duration: 0.3, ease: "power2.out" });
+          // Hide nav on scroll down
+          gsap.to(headerRef.current, { y: -100, duration: 0.3, ease: "power2.out", overwrite: true });
         } else if (currentScroll < lastScroll) {
-          gsap.to(headerRef.current, { y: 0, duration: 0.3, ease: "power2.out" });
+          // Show nav instantly on scroll up so it doesn't delay page transitions
+          gsap.set(headerRef.current, { y: 0, overwrite: true });
         }
       }
       lastScroll = currentScroll;
@@ -147,6 +525,7 @@ export function PreSignUpV3() {
     const ytmCards = [ytmC1.current, ytmC2.current, ytmC3.current, ytmC4.current];
     const mpCards = [mpC1.current, mpC2.current, mpC3.current, mpC4.current];
     const nurtCards = [nurtCard1.current, nurtCard2.current, nurtCard3.current, nurtCard4.current];
+    const bfeCards = [bfeCard1.current, bfeCard2.current, bfeCard3.current];
 
     const allRefsExist =
       mobileContainerRef.current && mobileRef.current && appScrollRef.current &&
@@ -156,7 +535,21 @@ export function PreSignUpV3() {
       ytmTitleRef.current && mpTitleRef.current && ltTitleRef.current &&
       ytmCards.every(Boolean) && mpCards.every(Boolean) && ltCardsRef.current &&
       nurturingTriggerRef.current && nurturingSectionRef.current &&
-      nurtCards.every(Boolean) && nurtHeadingRef.current;
+      nurtCards.every(Boolean) && nurtHeadingRef.current &&
+      hiwEntranceTriggerRef.current &&
+      hiwTrigger2Ref.current && hiwTrigger3Ref.current && hiwTrigger4Ref.current &&
+      howItWorksOverlayRef.current &&
+      hiwHeadingRef.current && hiwPanelContainerRef.current &&
+      hiwPanel1Ref.current && hiwPanel2Ref.current &&
+      hiwPanel3Ref.current && hiwPanel4Ref.current &&
+      bfeTriggerRef.current && bfeSectionRef.current &&
+      bfeHeadingRef.current && bfeCards.every(Boolean) &&
+      testimTriggerRef.current && testimSectionRef.current &&
+      testimHeadingRef.current && testimContentRef.current &&
+      faqTriggerRef.current && faqSectionRef.current &&
+      faqHeadingRef.current && faqContentRef.current &&
+      divTrigger1Ref.current && divTrigger2Ref.current &&
+      divSectionRef.current && divCardRef.current && divContentRef.current;
 
     if (allRefsExist) {
       // Side cards initial states
@@ -169,7 +562,7 @@ export function PreSignUpV3() {
 
       // Bonds section initial states
       gsap.set(bgOverlayRef.current, { opacity: 0 });
-      gsap.set(bondsSectionRef.current, { opacity: 0, y: 40 });
+      gsap.set(bondsSectionRef.current, { autoAlpha: 0, y: 40 });
       gsap.set(ytmCards, { transformOrigin: "top center" });
       gsap.set(mpCards, { transformOrigin: "top center" });
       gsap.set(mpTitleRef.current, { opacity: 0, y: 10 });
@@ -178,9 +571,50 @@ export function PreSignUpV3() {
       gsap.set(ltCardsRef.current, { opacity: 0, y: 40 });
 
       // Nurturing section initial states
-      gsap.set(nurturingSectionRef.current, { opacity: 0 });
+      gsap.set(nurturingSectionRef.current, { autoAlpha: 0 });
       gsap.set(nurtHeadingRef.current, { opacity: 0, y: 30 });
       gsap.set(nurtCards, { opacity: 0, y: 60 });
+
+      // Bonds for Everyone initial states
+      gsap.set(bfeSectionRef.current, { autoAlpha: 0 });
+      gsap.set(bfeHeadingRef.current, { opacity: 0, y: 30 });
+      gsap.set(bfeCards, { opacity: 0, y: 60 });
+
+      // Testimonials initial states
+      gsap.set(testimSectionRef.current, { autoAlpha: 0 });
+      gsap.set(testimHeadingRef.current, { opacity: 0, y: 30 });
+      gsap.set(testimContentRef.current, { opacity: 0, y: 60 });
+
+      // FAQ initial states
+      gsap.set(faqSectionRef.current, { autoAlpha: 0 });
+      gsap.set(faqHeadingRef.current, { opacity: 0, y: 30 });
+      gsap.set(faqContentRef.current, { opacity: 0, y: 60 });
+
+      // Diversify CTA initial states
+      gsap.set(divSectionRef.current, { autoAlpha: 0 });
+      gsap.set(divCardRef.current, {
+        clipPath: "inset(15% 5% 15% 5% round 40px)",
+      });
+      gsap.set(divContentRef.current, { opacity: 0, y: 40 });
+
+      // How It Works initial states
+      gsap.set(howItWorksOverlayRef.current, { autoAlpha: 0 });
+      gsap.set(hiwHeadingRef.current, { opacity: 0, y: 30 });
+      const hiwPanels = [hiwPanel1Ref.current!, hiwPanel2Ref.current!, hiwPanel3Ref.current!, hiwPanel4Ref.current!];
+
+      // Dynamic positioning: top-align active panel, peek next panel at bottom
+      const panelContainerHeight = hiwPanelContainerRef.current!.clientHeight;
+      const peekVisible = 60; // fixed 60px peek — just the top rounded edges of next cards
+      const peekY = panelContainerHeight - peekVisible;
+
+      // Panel 1: hidden, top-aligned
+      gsap.set(hiwPanels[0], { opacity: 0, y: 0 });
+      gsap.set(hiwPanels[0].children, { opacity: 0, y: 60 });
+      // Panels 2-4: hidden, positioned at peek (bottom of container, 10% visible)
+      for (let i = 1; i < hiwPanels.length; i++) {
+        gsap.set(hiwPanels[i], { opacity: 0, y: peekY });
+        gsap.set(hiwPanels[i].children, { opacity: 0, y: 0 });
+      }
 
       // ═══════════════════════════════════════════════════════
       // MAIN PINNED TIMELINE — +=340%
@@ -223,7 +657,7 @@ export function PreSignUpV3() {
       tl.to(bgOverlayRef.current, { opacity: 1, duration: 0.04 }, 0.59);
 
       // Phase 5: YTM section appears (0.63 → 0.67)
-      tl.to(bondsSectionRef.current, { opacity: 1, y: 0, ease: "power2.out", duration: 0.04 }, 0.63);
+      tl.to(bondsSectionRef.current, { autoAlpha: 1, y: 0, ease: "power2.out", duration: 0.04 }, 0.63);
 
       // Phase 6: YTM recedes → MP appears (0.69 → 0.79)
       tl.to(ytmTitleRef.current, { opacity: 0, y: -10, ease: "power2.in", duration: 0.05 }, 0.69);
@@ -255,7 +689,7 @@ export function PreSignUpV3() {
         start: "top 90%",
         onEnter: () => {
           // Fade out bonds section
-          gsap.to(bondsSectionRef.current, { opacity: 0, y: -30, duration: 0.4, ease: "power2.in" });
+          gsap.to(bondsSectionRef.current, { autoAlpha: 0, y: -30, duration: 0.4, ease: "power2.in" });
 
           // Change bg to white
           gsap.to(bgOverlayRef.current, {
@@ -264,7 +698,7 @@ export function PreSignUpV3() {
           });
 
           // Fade in nurturing section
-          gsap.to(nurturingSectionRef.current, { opacity: 1, duration: 0.3, delay: 0.25 });
+          gsap.to(nurturingSectionRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
 
           // Heading slides in
           gsap.to(nurtHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
@@ -280,12 +714,325 @@ export function PreSignUpV3() {
           });
         },
         onLeaveBack: () => {
-          // Reverse: hide nurturing, show bonds
+          // Reverse: hide nurturing and show bonds simultaneously
           gsap.to(nurtCards, { opacity: 0, y: 60, duration: 0.3, stagger: 0 });
           gsap.to(nurtHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
-          gsap.to(nurturingSectionRef.current, { opacity: 0, duration: 0.3 });
+          gsap.to(nurturingSectionRef.current, { autoAlpha: 0, duration: 0.3 });
           gsap.to(bgOverlayRef.current, { backgroundColor: "#F3F3F3", duration: 0.3 });
-          gsap.to(bondsSectionRef.current, { opacity: 1, y: 0, duration: 0.4, delay: 0.2, ease: "power2.out" });
+          gsap.to(bondsSectionRef.current, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" });
+        },
+      });
+
+      // ═══════════════════════════════════════════════════════
+      // HOW IT WORKS — entrance trigger (same pattern as nurturing)
+      // Nurturing fades out → overlay + heading + panel 1 cards stagger in
+      // ═══════════════════════════════════════════════════════
+
+      // Helper: transition forward — current panel fades out, peek panel slides up to full, next peek appears — concurrently
+      const transitionHiwForward = (
+        outPanel: HTMLElement,
+        inPanel: HTMLElement,
+        nextPeekPanel: HTMLElement | null,
+      ) => {
+        // Fade out the current active panel's children, then hide it
+        gsap.to(outPanel.children[0], { opacity: 0, y: -30, duration: 0.3, ease: "power2.in" });
+        gsap.to(outPanel.children[1], { opacity: 0, y: -30, duration: 0.3, ease: "power2.in", delay: 0.05 });
+        gsap.set(outPanel, { opacity: 0, delay: 0.35 });
+
+        // Slide the peeking panel up to top-aligned position
+        gsap.to(inPanel, { y: 0, duration: 0.5, ease: "power2.out" });
+        // Hide both children immediately, then stagger them in from scratch
+        gsap.set(inPanel.children[0], { opacity: 0, y: 40 });
+        gsap.set(inPanel.children[1], { opacity: 0, y: 40 });
+        gsap.to(inPanel.children[0], { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.2 });
+        gsap.to(inPanel.children[1], { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.5 });
+
+        // Show the next peek panel at the bottom — stagger left & right cards
+        if (nextPeekPanel) {
+          gsap.set(nextPeekPanel, { opacity: 1, y: peekY, delay: 0.4 });
+          gsap.set(nextPeekPanel.children[0], { opacity: 0, y: 0, delay: 0.4 });
+          gsap.set(nextPeekPanel.children[1], { opacity: 0, y: 0, delay: 0.4 });
+          gsap.to(nextPeekPanel.children[0], { opacity: 0.5, duration: 0.3, ease: "power2.out", delay: 0.45 });
+          gsap.to(nextPeekPanel.children[1], { opacity: 0.5, duration: 0.3, ease: "power2.out", delay: 0.7 });
+        }
+      };
+
+      // Helper: transition backward — current panel slides back to peek, previous panel fades in, old peek hides — all simultaneously
+      const transitionHiwBackward = (
+        currentPanel: HTMLElement,
+        prevPanel: HTMLElement,
+        hidePeekPanel: HTMLElement | null,
+      ) => {
+        // Hide the current peek panel if any
+        if (hidePeekPanel) {
+          gsap.to(hidePeekPanel, { opacity: 0, duration: 0.2 });
+          gsap.set(hidePeekPanel.children[0], { opacity: 0, delay: 0.2 });
+          gsap.set(hidePeekPanel.children[1], { opacity: 0, delay: 0.2 });
+        }
+
+        // Current panel slides back down to peek position — stagger cards
+        gsap.to(currentPanel, { y: peekY, duration: 0.5, ease: "power2.out" });
+        gsap.to(currentPanel.children[0], { opacity: 0.5, duration: 0.3 });
+        gsap.to(currentPanel.children[1], { opacity: 0.5, duration: 0.3, delay: 0.15 });
+
+        // Previous panel shows and children animate in with stagger
+        gsap.set(prevPanel, { opacity: 1 });
+        gsap.set(prevPanel.children[0], { opacity: 0, y: 40 });
+        gsap.set(prevPanel.children[1], { opacity: 0, y: 40 });
+        gsap.to(prevPanel.children[0], { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.1 });
+        gsap.to(prevPanel.children[1], { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.4 });
+      };
+
+      // Panel 1 entrance (nurturing → HIW)
+      ScrollTrigger.create({
+        trigger: hiwEntranceTriggerRef.current,
+        start: "top 90%",
+        onEnter: () => {
+          // Fade out nurturing section
+          gsap.to(nurtCards, { opacity: 0, y: -30, duration: 0.3, stagger: 0.05, ease: "power2.in" });
+          gsap.to(nurtHeadingRef.current, { opacity: 0, y: -30, duration: 0.4, ease: "power2.in" });
+          gsap.to(nurturingSectionRef.current, { autoAlpha: 0, duration: 0.4, delay: 0.2 });
+
+          // Fade in HIW overlay
+          gsap.to(howItWorksOverlayRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
+
+          // Heading slides in
+          gsap.to(hiwHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
+
+          // Panel 1 — left and right cards stagger in
+          gsap.set(hiwPanel1Ref.current!, { opacity: 1, delay: 0.35 });
+          gsap.to(hiwPanel1Ref.current!.children[0], { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.4 });
+          gsap.to(hiwPanel1Ref.current!.children[1], { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.55 });
+
+          // Show Panel 2 as peek at the bottom — stagger left & right cards
+          gsap.set(hiwPanel2Ref.current!, { opacity: 1, y: peekY, delay: 0.6 });
+          gsap.set(hiwPanel2Ref.current!.children[0], { opacity: 0, y: 0, delay: 0.6 });
+          gsap.set(hiwPanel2Ref.current!.children[1], { opacity: 0, y: 0, delay: 0.6 });
+          gsap.to(hiwPanel2Ref.current!.children[0], { opacity: 0.5, duration: 0.3, ease: "power2.out", delay: 0.65 });
+          gsap.to(hiwPanel2Ref.current!.children[1], { opacity: 0.5, duration: 0.3, ease: "power2.out", delay: 0.9 });
+        },
+        onLeaveBack: () => {
+          // Hide Panel 2 peek
+          gsap.set(hiwPanel2Ref.current!, { opacity: 0 });
+          gsap.set(hiwPanel2Ref.current!.children[0], { opacity: 0 });
+          gsap.set(hiwPanel2Ref.current!.children[1], { opacity: 0 });
+
+          // Reverse: hide HIW and bring back nurturing simultaneously
+          gsap.to(hiwPanel1Ref.current!.children[0], { opacity: 0, y: 60, duration: 0.3 });
+          gsap.to(hiwPanel1Ref.current!.children[1], { opacity: 0, y: 60, duration: 0.3 });
+          gsap.set(hiwPanel1Ref.current!, { opacity: 0, delay: 0.3 });
+          gsap.to(hiwHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
+          gsap.to(howItWorksOverlayRef.current, { autoAlpha: 0, duration: 0.3 });
+
+          // Bring back nurturing at the same time
+          gsap.to(nurturingSectionRef.current, { autoAlpha: 1, duration: 0.3 });
+          gsap.to(nurtHeadingRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+          gsap.to(nurtCards, {
+            opacity: 1, y: 0, duration: 0.4, stagger: 0.08, ease: "power2.out",
+          });
+        },
+      });
+
+      // Panel 1 → Panel 2 (Panel 3 becomes new peek)
+      ScrollTrigger.create({
+        trigger: hiwTrigger2Ref.current,
+        start: "top 90%",
+        onEnter: () => transitionHiwForward(hiwPanel1Ref.current!, hiwPanel2Ref.current!, hiwPanel3Ref.current!),
+        onLeaveBack: () => transitionHiwBackward(hiwPanel2Ref.current!, hiwPanel1Ref.current!, hiwPanel3Ref.current!),
+      });
+
+      // Panel 2 → Panel 3 (Panel 4 becomes new peek)
+      ScrollTrigger.create({
+        trigger: hiwTrigger3Ref.current,
+        start: "top 90%",
+        onEnter: () => transitionHiwForward(hiwPanel2Ref.current!, hiwPanel3Ref.current!, hiwPanel4Ref.current!),
+        onLeaveBack: () => transitionHiwBackward(hiwPanel3Ref.current!, hiwPanel2Ref.current!, hiwPanel4Ref.current!),
+      });
+
+      // Panel 3 → Panel 4 (no next peek — last panel)
+      ScrollTrigger.create({
+        trigger: hiwTrigger4Ref.current,
+        start: "top 90%",
+        onEnter: () => transitionHiwForward(hiwPanel3Ref.current!, hiwPanel4Ref.current!, null),
+        onLeaveBack: () => transitionHiwBackward(hiwPanel4Ref.current!, hiwPanel3Ref.current!, null),
+      });
+
+      // ═══════════════════════════════════════════════════════
+      // BONDS FOR EVERYONE — entrance trigger (HIW fades out → cards stagger in)
+      // ═══════════════════════════════════════════════════════
+      ScrollTrigger.create({
+        trigger: bfeTriggerRef.current,
+        start: "top 90%",
+        onEnter: () => {
+          // Fade out HIW overlay
+          gsap.to(howItWorksOverlayRef.current, { autoAlpha: 0, duration: 0.4, ease: "power2.in" });
+
+          // Fade in Bonds for Everyone section
+          gsap.to(bfeSectionRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
+
+          // Heading slides in
+          gsap.to(bfeHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
+
+          // Cards stagger in one by one with delay
+          gsap.to(bfeCards, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            stagger: 0.15,
+            ease: "power2.out",
+            delay: 0.5,
+          });
+        },
+        onLeaveBack: () => {
+          // Reverse: hide BFE and bring back HIW
+          gsap.to(bfeCards, { opacity: 0, y: 60, duration: 0.3, stagger: 0 });
+          gsap.to(bfeHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
+          gsap.to(bfeSectionRef.current, { autoAlpha: 0, duration: 0.3 });
+
+          // Bring back HIW
+          gsap.to(howItWorksOverlayRef.current, { autoAlpha: 1, duration: 0.3 });
+        },
+      });
+
+      // ═══════════════════════════════════════════════════════
+      // TESTIMONIALS — entrance trigger (BFE fades out → testimonials stagger in)
+      // ═══════════════════════════════════════════════════════
+      ScrollTrigger.create({
+        trigger: testimTriggerRef.current,
+        start: "top 90%",
+        onEnter: () => {
+          // Fade out BFE section
+          gsap.to(bfeCards, { opacity: 0, y: -30, duration: 0.3, stagger: 0.05, ease: "power2.in" });
+          gsap.to(bfeHeadingRef.current, { opacity: 0, y: -30, duration: 0.4, ease: "power2.in" });
+          gsap.to(bfeSectionRef.current, { autoAlpha: 0, duration: 0.4, delay: 0.2 });
+
+          // Reset testimonials to first slide
+          resetTestimonialsCarousel?.();
+
+          // Fade in testimonials section
+          gsap.to(testimSectionRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
+
+          // Heading slides in
+          gsap.to(testimHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
+
+          // Carousel content slides in with delay
+          gsap.to(testimContentRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            delay: 0.5,
+          });
+        },
+        onLeaveBack: () => {
+          // Reverse: hide testimonials and bring back BFE
+          gsap.to(testimContentRef.current, { opacity: 0, y: 60, duration: 0.3 });
+          gsap.to(testimHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
+          gsap.to(testimSectionRef.current, { autoAlpha: 0, duration: 0.3 });
+
+          // Bring back BFE
+          gsap.to(bfeSectionRef.current, { autoAlpha: 1, duration: 0.3 });
+          gsap.to(bfeHeadingRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+          gsap.to(bfeCards, {
+            opacity: 1, y: 0, duration: 0.4, stagger: 0.08, ease: "power2.out",
+          });
+        },
+      });
+
+      // ═══════════════════════════════════════════════════════
+      // FAQ — entrance trigger (testimonials fades out → FAQ fades in)
+      // ═══════════════════════════════════════════════════════
+      ScrollTrigger.create({
+        trigger: faqTriggerRef.current,
+        start: "top 90%",
+        onEnter: () => {
+          // Fade out testimonials
+          gsap.to(testimContentRef.current, { opacity: 0, y: -30, duration: 0.3, ease: "power2.in" });
+          gsap.to(testimHeadingRef.current, { opacity: 0, y: -30, duration: 0.4, ease: "power2.in" });
+          gsap.to(testimSectionRef.current, { autoAlpha: 0, duration: 0.4, delay: 0.2 });
+
+          // Fade in FAQ section
+          gsap.to(faqSectionRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
+
+          // Heading slides in
+          gsap.to(faqHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
+
+          // Accordion content slides in with delay
+          gsap.to(faqContentRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            delay: 0.5,
+          });
+        },
+        onLeaveBack: () => {
+          // Reverse: hide FAQ and bring back testimonials
+          gsap.to(faqContentRef.current, { opacity: 0, y: 60, duration: 0.3 });
+          gsap.to(faqHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
+          gsap.to(faqSectionRef.current, { autoAlpha: 0, duration: 0.3 });
+
+          // Bring back testimonials
+          gsap.to(testimSectionRef.current, { autoAlpha: 1, duration: 0.3 });
+          gsap.to(testimHeadingRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+          gsap.to(testimContentRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+        },
+      });
+
+      // ═══════════════════════════════════════════════════════
+      // DIVERSIFY CTA — Step 1: FAQ fades out → rounded card appears
+      // ═══════════════════════════════════════════════════════
+      ScrollTrigger.create({
+        trigger: divTrigger1Ref.current,
+        start: "top 90%",
+        onEnter: () => {
+          // Fade out FAQ
+          gsap.to(faqContentRef.current, { opacity: 0, y: -30, duration: 0.3, ease: "power2.in" });
+          gsap.to(faqHeadingRef.current, { opacity: 0, y: -30, duration: 0.4, ease: "power2.in" });
+          gsap.to(faqSectionRef.current, { autoAlpha: 0, duration: 0.4, delay: 0.2 });
+
+          // Show diversify section
+          gsap.to(divSectionRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
+
+          // Card content fades in
+          gsap.to(divContentRef.current, {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            delay: 0.4,
+          });
+        },
+        onLeaveBack: () => {
+          // Hide diversify, bring back FAQ
+          gsap.to(divContentRef.current, { opacity: 0, y: 40, duration: 0.3 });
+          gsap.to(divSectionRef.current, { autoAlpha: 0, duration: 0.3 });
+
+          gsap.to(faqSectionRef.current, { autoAlpha: 1, duration: 0.3 });
+          gsap.to(faqHeadingRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+          gsap.to(faqContentRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
+        },
+      });
+
+      // ═══════════════════════════════════════════════════════
+      // DIVERSIFY CTA — Step 2: circular clip-path expansion (material ripple)
+      // ═══════════════════════════════════════════════════════
+      ScrollTrigger.create({
+        trigger: divTrigger2Ref.current,
+        start: "top 90%",
+        onEnter: () => {
+          gsap.to(divCardRef.current, {
+            clipPath: "inset(0% 0% 0% 0% round 0px)",
+            duration: 0.45,
+            ease: "power3.out",
+          });
+        },
+        onLeaveBack: () => {
+          gsap.to(divCardRef.current, {
+            clipPath: "inset(15% 5% 15% 5% round 40px)",
+            duration: 0.45,
+            ease: "power3.out",
+          });
         },
       });
     }
@@ -323,7 +1070,7 @@ export function PreSignUpV3() {
       {/* ═══ Bonds Section — 3 stacked card layers ═══ */}
       <div
         ref={bondsSectionRef}
-        className="fixed inset-0 w-full h-full flex flex-col items-center justify-center z-[15] pointer-events-none"
+        className="fixed inset-0 w-full h-full flex flex-col items-center justify-center z-[15] pointer-events-none invisible"
       >
         <div className="pointer-events-auto flex flex-col items-center">
           <div className="text-center mb-10">
@@ -347,19 +1094,19 @@ export function PreSignUpV3() {
           </div>
 
           <div className="relative mb-10">
-            <div className="flex items-start justify-center gap-5">
+            <div className="flex items-start justify-center gap-8">
               <div ref={ytmC1}><BondCard badgeText="Highest YTM" badgeBg="bg-[#f2e2ff]" badgeTextColor="text-[#694189]" /></div>
               <div ref={ytmC2}><BondCard badgeText="Highest YTM" badgeBg="bg-[#f2e2ff]" badgeTextColor="text-[#694189]" /></div>
               <div ref={ytmC3}><BondCard badgeText="Highest YTM" badgeBg="bg-[#f2e2ff]" badgeTextColor="text-[#694189]" /></div>
               <div ref={ytmC4}><BondCard badgeText="Highest YTM" badgeBg="bg-[#f2e2ff]" badgeTextColor="text-[#694189]" /></div>
             </div>
-            <div className="absolute inset-0 flex items-start justify-center gap-5">
+            <div className="absolute inset-0 flex items-start justify-center gap-8">
               <div ref={mpC1}><BondCard badgeText="Monthly Payouts" badgeBg="bg-[#E2EAFF]" badgeTextColor="text-[#2B4899]" /></div>
               <div ref={mpC2}><BondCard badgeText="Monthly Payouts" badgeBg="bg-[#E2EAFF]" badgeTextColor="text-[#2B4899]" /></div>
               <div ref={mpC3}><BondCard badgeText="Monthly Payouts" badgeBg="bg-[#E2EAFF]" badgeTextColor="text-[#2B4899]" /></div>
               <div ref={mpC4}><BondCard badgeText="Monthly Payouts" badgeBg="bg-[#E2EAFF]" badgeTextColor="text-[#2B4899]" /></div>
             </div>
-            <div ref={ltCardsRef} className="absolute inset-0 flex items-start justify-center gap-5">
+            <div ref={ltCardsRef} className="absolute inset-0 flex items-start justify-center gap-8">
               <BondCard badgeText="Lowest Tenure" badgeBg="bg-[#FFE2EC]" badgeTextColor="text-[#8B2252]" />
               <BondCard badgeText="Lowest Tenure" badgeBg="bg-[#FFE2EC]" badgeTextColor="text-[#8B2252]" />
               <BondCard badgeText="Lowest Tenure" badgeBg="bg-[#FFE2EC]" badgeTextColor="text-[#8B2252]" />
@@ -367,24 +1114,19 @@ export function PreSignUpV3() {
             </div>
           </div>
 
-          <div>
-            <button className="px-8 py-3 rounded-full border border-black/20 text-black/50 text-sm font-medium tracking-tight hover:bg-black/5 transition-colors">
-              Show all bonds
-            </button>
-          </div>
         </div>
       </div>
 
       {/* ═══ Nurturing Section — Fixed overlay ═══ */}
       <div
         ref={nurturingSectionRef}
-        className="fixed inset-0 w-full h-full z-[16] pointer-events-none"
+        className="fixed inset-0 w-full h-full z-[16] pointer-events-none invisible"
         style={{ opacity: 0 }}
       >
         <div className="pointer-events-auto w-full h-full bg-white px-20 pt-24 pb-20 flex flex-col justify-center gap-6">
           {/* Heading */}
           <div ref={nurtHeadingRef} className="mb-8">
-            <div className="text-7xl font-normal leading-[1.2] tracking-[-0.96px] text-black flex flex-col gap-1.5">
+            <div className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black flex flex-col gap-1.5">
               <p>&ldquo;Nurturing financial growth&rdquo;</p>
               <div className="flex gap-2 items-center">
                 <p>for 1 lakh+</p>
@@ -542,8 +1284,279 @@ export function PreSignUpV3() {
       {/* Nurturing trigger section — appears after pin ends */}
       <section ref={nurturingTriggerRef} className="h-screen" />
 
-      {/* Extra scroll space */}
-      <section className="min-h-screen" />
+      {/* How It Works entrance trigger — mirrors nurturing entrance pattern */}
+      <section ref={hiwEntranceTriggerRef} className="h-screen" />
+
+      {/* ═══ How It Works — Fixed overlay ═══ */}
+      <div
+        ref={howItWorksOverlayRef}
+        className="fixed inset-0 w-full h-full z-[20] pointer-events-none invisible"
+      >
+        <div className="pointer-events-auto w-full h-full bg-white px-[72px] flex flex-col pt-32">
+          {/* Heading — persists across all 4 panels */}
+          <div ref={hiwHeadingRef} className="mb-10">
+            <p className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black">
+              How this works?
+            </p>
+          </div>
+
+          {/* Stacked panels — each absolutely positioned, fills remaining viewport height */}
+          <div ref={hiwPanelContainerRef} className="relative flex-1 overflow-hidden">
+            {/* Panel 1: Create Your Account — text left, phone right */}
+            <div ref={hiwPanel1Ref} className="absolute inset-x-0 h-[85%] flex gap-10">
+              <div className="bg-[#f3f3f3] border border-[#f3f3f3] rounded-[20px] flex-1 h-full flex items-center overflow-hidden">
+                <div className="pl-20 w-[497px] flex flex-col gap-6">
+                  <p className="text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
+                    Create Your Account
+                  </p>
+                  <p className="text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[34px]">
+                    Join 1 lakh+ investors. Sign up in minutes with basic details and complete your securely encrypted KYC process to get started.
+                  </p>
+                </div>
+              </div>
+              <div className="rounded-[20px] flex-1 h-full overflow-hidden bg-[#FBFBFB]">
+                <img src="/version 3/create-account.png" alt="Create Account" className="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            {/* Panel 2: Explore & Choose — phone left, text right */}
+            <div ref={hiwPanel2Ref} className="absolute inset-x-0 h-[85%] flex gap-10">
+              <div className="rounded-[20px] flex-1 h-full overflow-hidden bg-[#FBFBFB]">
+                <img src="/version 3/explore-choose.png" alt="Explore & Choose" className="w-full h-full object-cover" />
+              </div>
+              <div className="bg-[#f3f3f3] border border-[#f3f3f3] rounded-[20px] flex-1 h-full flex items-center overflow-hidden">
+                <div className="pl-20 w-[497px] flex flex-col gap-6">
+                  <p className="text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
+                    Explore &amp; Choose
+                  </p>
+                  <p className="text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[34px]">
+                    Browse through our curated collection of Govt, State Govt, and Corporate bonds. Filter by tenure, yield, and risk appetite.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Panel 3: Invest & Earn — text left, phone right */}
+            <div ref={hiwPanel3Ref} className="absolute inset-x-0 h-[85%] flex gap-10">
+              <div className="bg-[#f3f3f3] border border-[#f3f3f3] rounded-[20px] flex-1 h-full flex items-center overflow-hidden">
+                <div className="pl-20 w-[497px] flex flex-col gap-6">
+                  <p className="text-[48px] font-normal tracking-[-0.96px] text-black leading-normal whitespace-pre-wrap">
+                    {"Invest &\nEarn"}
+                  </p>
+                  <p className="text-[20px] font-normal tracking-[-0.4px] text-black/60 leading-[34px]">
+                    Complete your investment via UPI or Net Banking. Sit back and watch your wealth grow with predictable, timely returns.
+                  </p>
+                </div>
+              </div>
+              <div className="rounded-[20px] flex-1 h-full overflow-hidden bg-[#FBFBFB]">
+                <img src="/version 3/invest-earn.png" alt="Invest & Earn" className="w-full h-full object-cover" />
+              </div>
+            </div>
+
+            {/* Panel 4: Download the app — phone left, text right */}
+            <div ref={hiwPanel4Ref} className="absolute inset-x-0 h-[85%] flex gap-10">
+              <div className="rounded-[20px] flex-1 h-full overflow-hidden bg-[#FBFBFB]">
+                <img src="/version 3/download app.png" alt="Download App" className="w-full h-full object-cover object-top" />
+              </div>
+              <div className="bg-[#f3f3f3] border border-[#f3f3f3] rounded-[20px] flex-1 h-full flex items-center overflow-hidden">
+                <div className="mx-auto w-[484px] flex flex-col gap-8">
+                  <p className="text-[48px] font-normal tracking-[-0.96px] text-black leading-normal">
+                    Expand your investment portfolio for better returns today!
+                  </p>
+                  <button className="bg-black text-white font-medium text-[24px] tracking-[-0.48px] px-5 py-[19px] rounded-lg flex items-center gap-2.5 w-fit">
+                    Download the app
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How It Works panel transition triggers */}
+      <section ref={hiwTrigger2Ref} className="h-screen" />
+      <section ref={hiwTrigger3Ref} className="h-screen" />
+      <section ref={hiwTrigger4Ref} className="h-screen" />
+
+      {/* ═══ Bonds for Everyone — Fixed overlay ═══ */}
+      <div
+        ref={bfeSectionRef}
+        className="fixed inset-0 w-full h-full z-[25] pointer-events-none invisible"
+      >
+        <div className="pointer-events-auto w-full h-full bg-white flex flex-col items-center justify-center px-20">
+          {/* Heading */}
+          <div ref={bfeHeadingRef} className="flex flex-col items-center gap-3 mb-[70px]">
+            <p className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black text-center">
+              Bond&apos;s are for everyone
+            </p>
+            <p className="text-[24px] font-normal tracking-[-0.48px] text-black text-center">
+              From short term to long, from govt to corporate, we have got it all
+            </p>
+          </div>
+
+          {/* 3 Cards */}
+          <div className="flex gap-10 items-start w-full max-w-[1220px]">
+            {BONDS_FOR_EVERYONE_CARDS.map((card, i) => (
+              <div
+                key={card.title}
+                ref={[bfeCard1, bfeCard2, bfeCard3][i]}
+                className="flex flex-col gap-[30px] items-start w-[380px]"
+              >
+                {/* Placeholder image */}
+                <div className="bg-[#d9d9d9] rounded-[40px] w-[200px] h-[200px] shrink-0" />
+
+                {/* Text content */}
+                <div className="flex flex-col gap-5 w-full">
+                  <p className="text-[24px] font-normal tracking-[-0.48px] text-black leading-normal">
+                    {card.title}
+                  </p>
+                  <p className="text-[18px] font-normal tracking-[-0.36px] text-black/70 leading-[24px]">
+                    {card.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Bonds for Everyone trigger */}
+      <section ref={bfeTriggerRef} className="h-screen" />
+
+      {/* ═══ Testimonials — Fixed overlay ═══ */}
+      <div
+        ref={testimSectionRef}
+        className="fixed inset-0 w-full h-full z-[30] pointer-events-none invisible"
+      >
+        <div className="pointer-events-auto w-full h-full bg-white flex flex-col items-center justify-center px-20">
+          {/* Heading */}
+          <div ref={testimHeadingRef} className="mb-16">
+            <p className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black text-center">
+              What our users are saying
+            </p>
+          </div>
+
+          {/* Carousel */}
+          <div ref={testimContentRef}>
+            <TestimonialsCarousel />
+          </div>
+        </div>
+      </div>
+
+      {/* Testimonials trigger */}
+      <section ref={testimTriggerRef} className="h-screen" />
+
+      {/* ═══ FAQ — Fixed overlay ═══ */}
+      <div
+        ref={faqSectionRef}
+        className="fixed inset-0 w-full h-full z-[35] pointer-events-none invisible"
+      >
+        <div
+          className="pointer-events-auto w-full h-full bg-white flex items-center justify-center px-20"
+          style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
+        >
+          <div className="flex gap-20 items-start w-full max-w-[1220px]">
+            {/* Left column — heading + subtitle + support link */}
+            <div ref={faqHeadingRef} className="w-[340px] shrink-0">
+              <p className="text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black">
+                FAQs
+              </p>
+              <p className="text-[16px] font-normal tracking-[-0.32px] text-black/50 mt-3 leading-relaxed">
+                Your questions answered
+              </p>
+              <p className="text-[15px] font-normal tracking-[-0.3px] text-black/50 mt-8 leading-relaxed">
+                Can&apos;t find what you&apos;re looking for?{" "}
+                Contact our{" "}
+                <a
+                  href="#"
+                  className="text-black font-semibold hover:underline"
+                >
+                  customer support team
+                </a>
+              </p>
+            </div>
+
+            {/* Right column — accordion */}
+            <div ref={faqContentRef} className="flex-1 min-w-0">
+              <FAQAccordion />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* FAQ trigger */}
+      <section ref={faqTriggerRef} className="h-screen" />
+
+      {/* ═══ Diversify CTA — Fixed overlay ═══ */}
+      <div
+        ref={divSectionRef}
+        className="fixed inset-0 w-full h-full z-[40] pointer-events-none invisible"
+      >
+        <div className="pointer-events-auto w-full h-full">
+          {/* Card — full viewport, clipped via clip-path */}
+          <div
+            ref={divCardRef}
+            className="w-full h-full bg-[#002e2e] flex items-center justify-center relative"
+            style={{
+            clipPath: "inset(25% 5% 25% 5% round 40px)",
+              fontFamily: "var(--font-instrument-sans), sans-serif",
+            }}
+          >
+            {/* Background pattern — fixed size, centered, no scaling */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                backgroundImage: "url(/version\\ 3/diversify-pattern.png)",
+                backgroundPosition: "center center",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "100vw 100vh",
+              }}
+            />
+
+            {/* Content */}
+            <div
+              ref={divContentRef}
+              className="relative z-10 flex flex-col items-center text-center px-[196px] py-[100px] gap-[52px]"
+            >
+              <div className="flex flex-col gap-[22px] items-center">
+                <p className="text-[56px] font-normal tracking-[-1.12px] text-white leading-[1.2]">
+                  Ready to diversify your investments?
+                </p>
+                <p className="text-[24px] font-normal tracking-[-0.48px] text-white/60">
+                  It&apos;s never wise to keep all your investments in the same
+                  basket
+                </p>
+              </div>
+              <button className="bg-[#3be2e4] text-black font-medium text-[24px] tracking-[-0.48px] px-5 py-[19px] rounded-lg flex items-center gap-2.5 transition-all hover:bg-[#2dd1d3]">
+                Show all bonds
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5 12H19M19 12L12 5M19 12L12 19"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Diversify trigger 1: card entrance */}
+      <section ref={divTrigger1Ref} className="h-screen" />
+      {/* Diversify trigger 2: expand to fullscreen */}
+      <section ref={divTrigger2Ref} className="h-screen" />
     </div>
   );
 }
