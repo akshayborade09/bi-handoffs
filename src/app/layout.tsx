@@ -1,19 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { DM_Sans, Instrument_Sans } from "next/font/google";
+import { Urbanist } from "next/font/google";
 import { Providers } from "./Providers";
 import "./globals.css";
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const urbanist = Urbanist({
+  variable: "--font-urbanist",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
-
-const instrumentSans = Instrument_Sans({
-  variable: "--font-instrument-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -35,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${instrumentSans.variable} font-sans`} suppressHydrationWarning>
+    <html lang="en" className={`${urbanist.variable} font-sans`} suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"

@@ -21,9 +21,9 @@ function BondCard({
   return (
     <div
       className="bg-white rounded-[12px] desk-sm:rounded-[14px] desk-md:rounded-[17px] desk:rounded-[20px] shadow-[0px_4px_44px_0px_rgba(0,0,0,0.05)] p-2 desk-sm:p-2.5 desk-md:p-3 desk:p-3.5 flex flex-col gap-2.5 desk-sm:gap-3 desk-md:gap-4 desk:gap-5 w-[210px] desk-sm:w-[230px] desk-md:w-[270px] desk:w-[300px] desk-lg:w-[340px]"
-      style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
+      style={{ fontFamily: "var(--font-urbanist), sans-serif" }}
     >
-      <div className="bg-[#d1dadd] rounded-[9px] desk-sm:rounded-[11px] desk-md:rounded-[14px] desk:rounded-[16px] h-[100px] desk-sm:h-[115px] desk-md:h-[140px] desk:h-[150px] desk-lg:h-[170px] relative overflow-hidden">
+      <div className="bg-[#d1dadd] rounded-[11px] desk-sm:rounded-[13px] desk-md:rounded-[17px] desk:rounded-[19px] h-[120px] desk-sm:h-[138px] desk-md:h-[168px] desk:h-[180px] desk-lg:h-[204px] relative overflow-hidden">
         <p className="absolute bottom-8 left-3 text-[#126b89] font-semibold text-[15px] tracking-[-0.3px]">
           11.81% yearly
         </p>
@@ -429,6 +429,7 @@ export function PreSignUpV3() {
   const card6Ref = useRef<HTMLDivElement>(null);
 
   const bgPatternRef = useRef<HTMLDivElement>(null);
+  const bgOverlayImageRef = useRef<HTMLDivElement>(null);
   const bgOverlayRef = useRef<HTMLDivElement>(null);
   const bondsSectionRef = useRef<HTMLDivElement>(null);
 
@@ -536,7 +537,7 @@ export function PreSignUpV3() {
       mobileContainerRef.current && mobileRef.current && appScrollRef.current &&
       yieldCardRef.current && tenureCardRef.current && card3Ref.current &&
       card4Ref.current && card5Ref.current && card6Ref.current &&
-      bgPatternRef.current && bgOverlayRef.current && bondsSectionRef.current &&
+      bgPatternRef.current && bgOverlayImageRef.current && bgOverlayRef.current && bondsSectionRef.current &&
       ytmTitleRef.current && mpTitleRef.current && ltTitleRef.current &&
       ytmCards.every(Boolean) && mpCards.every(Boolean) && ltCardsRef.current &&
       nurturingTriggerRef.current && nurturingSectionRef.current &&
@@ -632,24 +633,29 @@ export function PreSignUpV3() {
       });
 
       // Phase 1: Mobile centers + section pt shrinks (0 → 0.18)
+      // Fade out bg-pattern + bg-overlay image
       tl.to(mobileContainerRef.current, { paddingTop: 0, ease: "power1.out", duration: 0.18 }, 0);
       tl.to(headingContainerRef.current!, { opacity: 0, height: 0, ease: "power1.out", duration: 0.14 }, 0);
       tl.to(mobileRef.current, { scale: 0.85, ease: "power1.out", duration: 0.18 }, 0);
+      tl.to(bgPatternRef.current, { opacity: 0, ease: "power1.out", duration: 0.10 }, 0);
+      tl.to(bgOverlayImageRef.current, { opacity: 0, ease: "power1.out", duration: 0.10 }, 0);
 
-      // Phase 2: Pause (0.18 → 0.24)
-      tl.to({}, { duration: 0.06 }, 0.18);
+      // Phase 2: #DEF9FF fades in after bg is gone (0.10 → 0.16)
+      tl.to(bgOverlayRef.current, { opacity: 1, ease: "power1.out", duration: 0.06 }, 0.10);
 
       // Phase 3: Phone scroll (0.24 → 0.59) — cards are delayed & slower
+      // Transition bg from #DEF9FF → #FFFFFF during phone scroll
+      tl.to(bgOverlayRef.current, { backgroundColor: "#FFFFFF", ease: "none", duration: 0.35 }, 0.24);
       tl.to(appScrollRef.current, { y: -3500, ease: "none", duration: 0.35 }, 0.24);
       const CARD_MOVE_DISTANCE = 2600;
-      // Fade in cards with delay after phone scroll starts (0.30 → 0.38)
+      // Fade in cards when phone finishes scaling to center (0.18)
       [yieldCardRef, tenureCardRef, card3Ref, card4Ref, card5Ref, card6Ref].forEach((ref) => {
-        tl.to(ref.current!, { autoAlpha: 1, duration: 0.08, ease: "power2.out" }, 0.30);
+        tl.to(ref.current!, { autoAlpha: 1, duration: 0.06, ease: "power2.in" }, 0.18);
       });
-      // Move cards — delayed start (0.30) and slower pace than phone scroll
+      // Move cards — starts with fade in (0.18), linear so scroll begins instantly
       [yieldCardRef, tenureCardRef, card3Ref, card4Ref, card5Ref, card6Ref].forEach((ref, i) => {
         const startY = [-200, 400, 1000, 1600, 2200, 2800][i];
-        tl.to(ref.current!, { y: startY - CARD_MOVE_DISTANCE, ease: "power1.inOut", duration: 0.29 }, 0.30);
+        tl.to(ref.current!, { y: startY - CARD_MOVE_DISTANCE, ease: "none", duration: 0.41 }, 0.18);
       });
 
       // Phase 4: Phone exits (0.52 → 0.63)
@@ -658,8 +664,8 @@ export function PreSignUpV3() {
       [yieldCardRef, tenureCardRef, card3Ref, card4Ref, card5Ref, card6Ref].forEach((ref) => {
         tl.to(ref.current!, { autoAlpha: 0, duration: 0.08, ease: "power2.in" }, 0.52);
       });
-      tl.to(bgPatternRef.current, { opacity: 0, duration: 0.04 }, 0.59);
-      tl.to(bgOverlayRef.current, { opacity: 1, duration: 0.04 }, 0.59);
+      // Transition bg color from #DEF9FF to #FFFFFF for bonds section
+      tl.to(bgOverlayRef.current, { backgroundColor: "#FFFFFF", duration: 0.04, ease: "none" }, 0.59);
 
       // Phase 5: YTM section appears (0.63 → 0.67)
       tl.to(bondsSectionRef.current, { autoAlpha: 1, y: 0, ease: "power2.out", duration: 0.04 }, 0.63);
@@ -723,7 +729,7 @@ export function PreSignUpV3() {
           gsap.to(nurtCards, { opacity: 0, y: 60, duration: 0.3, stagger: 0 });
           gsap.to(nurtHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
           gsap.to(nurturingSectionRef.current, { autoAlpha: 0, duration: 0.3 });
-          gsap.to(bgOverlayRef.current, { backgroundColor: "#F3F3F3", duration: 0.3 });
+          gsap.to(bgOverlayRef.current, { backgroundColor: "#FFFFFF", duration: 0.3 });
           gsap.to(bondsSectionRef.current, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" });
         },
       });
@@ -862,10 +868,25 @@ export function PreSignUpV3() {
         },
       });
 
-      // Hide HIW once BFE fully covers it (when BFE top reaches viewport top)
+      // Fade out HIW as BFE scrolls over it
+      const hiwFadeTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: bfeSectionRef.current,
+          start: "top 80%",
+          end: "top 20%",
+          scrub: 0.3,
+        },
+      });
+      hiwFadeTl.fromTo(
+        howItWorksOverlayRef.current,
+        { opacity: 1 },
+        { opacity: 0, duration: 1, ease: "none", immediateRender: false },
+        0,
+      );
+      // Fully hide after fade completes
       ScrollTrigger.create({
         trigger: bfeSectionRef.current,
-        start: "top top",
+        start: "top 20%",
         onEnter: () => {
           gsap.set(howItWorksOverlayRef.current, { autoAlpha: 0, pointerEvents: "none" });
         },
@@ -977,8 +998,12 @@ export function PreSignUpV3() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-b from-white via-[#E3FDF3] to-[#E3FDEB] relative"
-      style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
+      className="min-h-screen relative"
+      style={{
+        fontFamily: "var(--font-urbanist), sans-serif",
+        letterSpacing: "-0.01em",
+        background: "linear-gradient(180deg, #27A1A1 0%, #006666 100%), linear-gradient(180deg, #FFF 0%, #F0FFFA 61.06%, #E3FDF5 100%)",
+      }}
     >
       {/* Background Pattern */}
       <div
@@ -992,11 +1017,36 @@ export function PreSignUpV3() {
         }}
       />
 
+      {/* Background Overlay Image — on top of bg-pattern
+           ┌─────────────── TWEAK THESE ───────────────┐
+           │  width / height  → size of the overlay     │
+           │  top             → vertical position        │
+           │  left            → horizontal position      │
+           │  transform       → fine-tune centering      │
+           │  opacity         → blend intensity           │
+           └────────────────────────────────────────────┘ */}
+      <div
+        ref={bgOverlayImageRef}
+        className="fixed pointer-events-none z-[1]"
+        style={{
+          width: "180%",           /* ← overlay width  (increase = bigger) */
+          height: "180%",          /* ← overlay height (increase = bigger) */
+          top: "-70%",              /* ← vertical shift (negative = up, positive = down) */
+          left: "50%",             /* ← horizontal anchor */
+          transform: "translateX(-50%)", /* ← keeps it centered horizontally */
+          opacity: 1,              /* ← 0–1 blend strength */
+          backgroundImage: "url(/version\\ 3/bg-overlay.png)",
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      />
+
       {/* Background Overlay */}
       <div
         ref={bgOverlayRef}
         className="fixed inset-0 w-full h-full pointer-events-none z-[5]"
-        style={{ backgroundColor: "#F3F3F3", opacity: 0 }}
+        style={{ backgroundColor: "#EEFFFC", opacity: 0 }}
       />
 
       {/* ═══ Bonds Section — 3 stacked card layers ═══ */}
@@ -1004,14 +1054,14 @@ export function PreSignUpV3() {
         ref={bondsSectionRef}
         className="fixed inset-0 w-full h-full flex flex-col items-center justify-center z-[15] pointer-events-none invisible"
       >
-        <div className="pointer-events-auto flex flex-col items-center gap-5">
+        <div className="pointer-events-auto flex flex-col items-center gap-10">
           <div className="text-center mb-4 desk-md:mb-6 desk:mb-8 relative h-[70px] desk-sm:h-[80px] desk-md:h-[85px] desk:h-[90px] desk-lg:h-[95px] w-full">
             {/* YTM heading group */}
             <div ref={ytmTitleRef} className="absolute inset-x-0 top-0 flex flex-col items-center whitespace-nowrap">
               <p className="text-base desk-sm:text-lg desk-md:text-xl desk:text-[21px] desk-lg:text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
                 Bonds with highest
               </p>
-              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
+              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-bold tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #C57AFF 0%, #37035F 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Yield to Maturity
               </p>
@@ -1021,7 +1071,7 @@ export function PreSignUpV3() {
               <p className="text-base desk-sm:text-lg desk-md:text-xl desk:text-[21px] desk-lg:text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
                 Bonds with highest
               </p>
-              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
+              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-bold tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #2B5BDB 0%, #0C1C54 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Monthly Payouts
               </p>
@@ -1031,7 +1081,7 @@ export function PreSignUpV3() {
               <p className="text-base desk-sm:text-lg desk-md:text-xl desk:text-[21px] desk-lg:text-[22px] font-semibold tracking-[-0.44px] text-black mb-1">
                 Bonds with
               </p>
-              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-medium tracking-[-0.96px] whitespace-nowrap"
+              <p className="text-3xl desk-sm:text-4xl desk-md:text-[42px] desk:text-[45px] desk-lg:text-[48px] font-bold tracking-[-0.96px] whitespace-nowrap"
                 style={{ background: "linear-gradient(180deg, #E84393 0%, #6C1D45 100%)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                 Lowest tenure
               </p>
@@ -1171,40 +1221,40 @@ export function PreSignUpV3() {
       {/* Hero Section with Mobile */}
       <section ref={mobileContainerRef} className="relative px-8 desk-sm:px-16 desk-md:px-24 desk:px-28 desk-lg:px-32 pt-28 overflow-visible h-screen flex flex-col z-10">
         <div ref={yieldCardRef} className="absolute right-0 desk-sm:right-0 desk-md:right-4 desk:right-10 desk-lg:right-16 top-1/2 z-10 invisible">
-          <img src="/version 3/yield.png" alt="Yield Card" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
+          <img src="/version 3/yield.png" alt="Yield Card" className="w-[240px] desk-sm:w-[288px] desk-md:w-[360px] desk:w-[432px] desk-lg:w-[480px] h-auto" />
         </div>
         <div ref={tenureCardRef} className="absolute left-0 desk-sm:left-0 desk-md:left-4 desk:left-10 desk-lg:left-16 top-1/2 z-10 invisible">
-          <img src="/version 3/tenure.png" alt="Tenure Card" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
+          <img src="/version 3/tenure.png" alt="Tenure Card" className="w-[240px] desk-sm:w-[288px] desk-md:w-[360px] desk:w-[432px] desk-lg:w-[480px] h-auto" />
         </div>
         <div ref={card3Ref} className="absolute right-0 desk-sm:right-0 desk-md:right-4 desk:right-10 desk-lg:right-16 top-1/2 z-10 invisible">
-          <img src="/version 3/payout.png" alt="Payout Card" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
+          <img src="/version 3/payout.png" alt="Payout Card" className="w-[240px] desk-sm:w-[288px] desk-md:w-[360px] desk:w-[432px] desk-lg:w-[480px] h-auto" />
         </div>
         <div ref={card4Ref} className="absolute left-0 desk-sm:left-0 desk-md:left-4 desk:left-10 desk-lg:left-16 top-1/2 z-10 invisible">
-          <img src="/version 3/yield.png" alt="Yield Card 2" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
+          <img src="/version 3/yield.png" alt="Yield Card 2" className="w-[240px] desk-sm:w-[288px] desk-md:w-[360px] desk:w-[432px] desk-lg:w-[480px] h-auto" />
         </div>
         <div ref={card5Ref} className="absolute right-0 desk-sm:right-0 desk-md:right-4 desk:right-10 desk-lg:right-16 top-1/2 z-10 invisible">
-          <img src="/version 3/tenure.png" alt="Tenure Card 2" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
+          <img src="/version 3/tenure.png" alt="Tenure Card 2" className="w-[240px] desk-sm:w-[288px] desk-md:w-[360px] desk:w-[432px] desk-lg:w-[480px] h-auto" />
         </div>
         <div ref={card6Ref} className="absolute left-0 desk-sm:left-0 desk-md:left-4 desk:left-10 desk-lg:left-16 top-1/2 z-10 invisible">
-          <img src="/version 3/payout.png" alt="Payout Card 2" className="w-[200px] desk-sm:w-[240px] desk-md:w-[300px] desk:w-[360px] desk-lg:w-[400px] h-auto" />
+          <img src="/version 3/payout.png" alt="Payout Card 2" className="w-[240px] desk-sm:w-[288px] desk-md:w-[360px] desk:w-[432px] desk-lg:w-[480px] h-auto" />
         </div>
 
         <div ref={headingContainerRef} className="flex flex-col items-center text-center">
           <div className="whitespace-nowrap">
             <ScrollReveal
               containerClassName="text-center"
-              textClassName="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-medium leading-tight tracking-tighter text-black whitespace-nowrap"
+              textClassName="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-medium leading-tight tracking-[-0.01em] text-black whitespace-nowrap"
               baseOpacity={0.2} baseRotation={2} blurStrength={3}
             >
               Invest in bonds with
             </ScrollReveal>
           </div>
           <div className="flex items-center justify-center gap-3 mt-0">
-            <span className="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-medium leading-tight tracking-tighter bg-gradient-to-b from-[#06C3C5] to-[#035E5F] bg-clip-text text-transparent"
-              style={{ WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+            <span className="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-bold leading-tight tracking-[-0.01em]"
+              style={{ color: "#00BEC0" }}>
               9-12%
             </span>
-            <span className="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-medium leading-tight tracking-tighter text-black">fixed returns</span>
+            <span className="text-5xl desk-sm:text-6xl desk-md:text-7xl desk:text-[80px] desk-lg:text-8xl font-medium leading-tight tracking-[-0.01em] text-black">fixed returns</span>
           </div>
           <div className="flex items-center justify-center gap-4 desk-md:gap-5 desk:gap-6 mt-2 desk-sm:mt-3 desk-md:mt-4 desk:mt-5 desk-lg:mt-6 mb-8 desk-sm:mb-10 desk-md:mb-12 desk:mb-14 desk-lg:mb-16">
             <span className="text-base desk-md:text-lg desk:text-xl font-medium text-black">SEBI Registered</span>
@@ -1416,8 +1466,8 @@ export function PreSignUpV3() {
       {/* ═══ FAQ — Normal scroll section ═══ */}
       <section
         ref={faqSectionRef}
-        className="relative z-[40] bg-black min-h-screen flex items-center px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20"
-        style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
+        className="relative z-[40] bg-black min-h-[125vh] flex items-center px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20"
+        style={{ fontFamily: "var(--font-urbanist), sans-serif" }}
       >
         <div className="flex gap-10 desk-sm:gap-12 desk-md:gap-16 desk:gap-18 desk-lg:gap-20 items-start w-full max-w-[900px] desk-sm:max-w-[1000px] desk-md:max-w-[1100px] desk:max-w-[1160px] desk-lg:max-w-[1220px] mx-auto">
           {/* Left column — heading + subtitle + support link */}
@@ -1459,7 +1509,7 @@ export function PreSignUpV3() {
             className="w-full h-full bg-[#021c1c] flex items-center justify-center relative"
             style={{
             clipPath: "inset(15% 5% 15% 5% round 40px)",
-              fontFamily: "var(--font-instrument-sans), sans-serif",
+              fontFamily: "var(--font-urbanist), sans-serif",
             }}
           >
             {/* Background pattern — fixed size, centered, no scaling */}
