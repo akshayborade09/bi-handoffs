@@ -474,7 +474,6 @@ export function PreSignUpV3() {
 
 
   // Bonds for Everyone section refs
-  const bfeTriggerRef = useRef<HTMLDivElement>(null);
   const bfeSectionRef = useRef<HTMLDivElement>(null);
   const bfeHeadingRef = useRef<HTMLDivElement>(null);
   const bfeCard1 = useRef<HTMLDivElement>(null);
@@ -482,13 +481,11 @@ export function PreSignUpV3() {
   const bfeCard3 = useRef<HTMLDivElement>(null);
 
   // Testimonials section refs
-  const testimTriggerRef = useRef<HTMLDivElement>(null);
   const testimSectionRef = useRef<HTMLDivElement>(null);
   const testimHeadingRef = useRef<HTMLDivElement>(null);
   const testimContentRef = useRef<HTMLDivElement>(null);
 
   // FAQ section refs
-  const faqTriggerRef = useRef<HTMLDivElement>(null);
   const faqSectionRef = useRef<HTMLDivElement>(null);
   const faqHeadingRef = useRef<HTMLDivElement>(null);
   const faqContentRef = useRef<HTMLDivElement>(null);
@@ -550,11 +547,11 @@ export function PreSignUpV3() {
       hiwHeadingRef.current && hiwPanelContainerRef.current &&
       hiwPanel1Ref.current && hiwPanel2Ref.current &&
       hiwPanel3Ref.current && hiwPanel4Ref.current &&
-      bfeTriggerRef.current && bfeSectionRef.current &&
+      bfeSectionRef.current &&
       bfeHeadingRef.current && bfeCards.every(Boolean) &&
-      testimTriggerRef.current && testimSectionRef.current &&
+      testimSectionRef.current &&
       testimHeadingRef.current && testimContentRef.current &&
-      faqTriggerRef.current && faqSectionRef.current &&
+      faqSectionRef.current &&
       faqHeadingRef.current && faqContentRef.current &&
       divTrigger1Ref.current && divTrigger2Ref.current &&
       divSectionRef.current && divCardRef.current && divContentRef.current;
@@ -583,18 +580,15 @@ export function PreSignUpV3() {
       gsap.set(nurtHeadingRef.current, { opacity: 0, y: 30 });
       gsap.set(nurtCards, { opacity: 0, y: 60 });
 
-      // Bonds for Everyone initial states
-      gsap.set(bfeSectionRef.current, { autoAlpha: 0 });
+      // Bonds for Everyone initial states (section is in normal flow, just hide inner elements)
       gsap.set(bfeHeadingRef.current, { opacity: 0, y: 30 });
       gsap.set(bfeCards, { opacity: 0, y: 60 });
 
-      // Testimonials initial states
-      gsap.set(testimSectionRef.current, { autoAlpha: 0 });
+      // Testimonials initial states (section is in normal flow, just hide inner elements)
       gsap.set(testimHeadingRef.current, { opacity: 0, y: 30 });
       gsap.set(testimContentRef.current, { opacity: 0, y: 60 });
 
-      // FAQ initial states
-      gsap.set(faqSectionRef.current, { autoAlpha: 0 });
+      // FAQ initial states (section is in normal flow, just hide inner elements)
       gsap.set(faqHeadingRef.current, { opacity: 0, y: 30 });
       gsap.set(faqContentRef.current, { opacity: 0, y: 60 });
 
@@ -841,105 +835,83 @@ export function PreSignUpV3() {
       buildHiwScrubTransition(hiwTrigger4Ref.current!, hiwPanel3Ref.current!, hiwPanel4Ref.current!, null, 3);
 
       // ═══════════════════════════════════════════════════════
-      // BONDS FOR EVERYONE — entrance trigger (HIW fades out → cards stagger in)
+      // BONDS FOR EVERYONE — scroll-reveal (BFE scrolls over HIW as parallax)
+      // HIW stays visible behind; BFE at z-[25] covers HIW at z-[20]
       // ═══════════════════════════════════════════════════════
       ScrollTrigger.create({
-        trigger: bfeTriggerRef.current,
-        start: "top 90%",
+        trigger: bfeSectionRef.current,
+        start: "top 80%",
         onEnter: () => {
-          // Fade out HIW overlay
-          gsap.to(howItWorksOverlayRef.current, { autoAlpha: 0, pointerEvents: "none", duration: 0.4, ease: "power2.in" });
-
-          // Fade in Bonds for Everyone section
-          gsap.to(bfeSectionRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
-
           // Heading slides in
-          gsap.to(bfeHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
+          gsap.to(bfeHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.1 });
 
-          // Cards stagger in one by one with delay
+          // Cards stagger in one by one
           gsap.to(bfeCards, {
             opacity: 1,
             y: 0,
             duration: 0.5,
             stagger: 0.15,
             ease: "power2.out",
-            delay: 0.5,
+            delay: 0.25,
           });
         },
         onLeaveBack: () => {
-          // Reverse: hide BFE and bring back HIW
+          // Reverse: reset BFE elements
           gsap.to(bfeCards, { opacity: 0, y: 60, duration: 0.3, stagger: 0 });
           gsap.to(bfeHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
-          gsap.to(bfeSectionRef.current, { autoAlpha: 0, duration: 0.3 });
+        },
+      });
 
-          // Bring back HIW
-          gsap.to(howItWorksOverlayRef.current, { autoAlpha: 1, pointerEvents: "auto", duration: 0.3 });
+      // Hide HIW once BFE fully covers it (when BFE top reaches viewport top)
+      ScrollTrigger.create({
+        trigger: bfeSectionRef.current,
+        start: "top top",
+        onEnter: () => {
+          gsap.set(howItWorksOverlayRef.current, { autoAlpha: 0, pointerEvents: "none" });
+        },
+        onLeaveBack: () => {
+          gsap.set(howItWorksOverlayRef.current, { autoAlpha: 1, pointerEvents: "auto" });
         },
       });
 
       // ═══════════════════════════════════════════════════════
-      // TESTIMONIALS — entrance trigger (BFE fades out → testimonials stagger in)
+      // TESTIMONIALS — scroll-reveal (elements animate in when section scrolls into view)
       // ═══════════════════════════════════════════════════════
       ScrollTrigger.create({
-        trigger: testimTriggerRef.current,
-        start: "top 90%",
+        trigger: testimSectionRef.current,
+        start: "top 80%",
         onEnter: () => {
-          // Fade out BFE section
-          gsap.to(bfeCards, { opacity: 0, y: -30, duration: 0.3, stagger: 0.05, ease: "power2.in" });
-          gsap.to(bfeHeadingRef.current, { opacity: 0, y: -30, duration: 0.4, ease: "power2.in" });
-          gsap.to(bfeSectionRef.current, { autoAlpha: 0, duration: 0.4, delay: 0.2 });
-
           // Reset testimonials to first slide
           resetTestimonialsCarousel?.();
 
-          // Fade in testimonials section
-          gsap.to(testimSectionRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
-
           // Heading slides in
-          gsap.to(testimHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
+          gsap.to(testimHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.1 });
 
-          // Carousel content slides in with delay
+          // Carousel content slides in
           gsap.to(testimContentRef.current, {
             opacity: 1,
             y: 0,
             duration: 0.5,
             ease: "power2.out",
-            delay: 0.5,
+            delay: 0.25,
           });
         },
         onLeaveBack: () => {
-          // Reverse: hide testimonials and bring back BFE
+          // Reverse: reset testimonials elements
           gsap.to(testimContentRef.current, { opacity: 0, y: 60, duration: 0.3 });
           gsap.to(testimHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
-          gsap.to(testimSectionRef.current, { autoAlpha: 0, duration: 0.3 });
-
-          // Bring back BFE
-          gsap.to(bfeSectionRef.current, { autoAlpha: 1, duration: 0.3 });
-          gsap.to(bfeHeadingRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
-          gsap.to(bfeCards, {
-            opacity: 1, y: 0, duration: 0.4, stagger: 0.08, ease: "power2.out",
-          });
         },
       });
 
       // ═══════════════════════════════════════════════════════
-      // FAQ — entrance trigger (testimonials fades out → FAQ fades in)
+      // FAQ — scroll-reveal (elements animate in when section scrolls into view)
       // ═══════════════════════════════════════════════════════
       ScrollTrigger.create({
-        trigger: faqTriggerRef.current,
-        start: "top 90%",
+        trigger: faqSectionRef.current,
+        start: "top 80%",
         onEnter: () => {
-          // Fade out testimonials
-          gsap.to(testimContentRef.current, { opacity: 0, y: -30, duration: 0.3, ease: "power2.in" });
-          gsap.to(testimHeadingRef.current, { opacity: 0, y: -30, duration: 0.4, ease: "power2.in" });
-          gsap.to(testimSectionRef.current, { autoAlpha: 0, duration: 0.4, delay: 0.2 });
-
-          // Fade in FAQ section (reset y in case it was parallaxed up)
-          gsap.set(faqSectionRef.current, { y: 0 });
-          gsap.to(faqSectionRef.current, { autoAlpha: 1, duration: 0.3, delay: 0.25 });
-
           // Heading slides in
-          gsap.to(faqHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.3 });
+          gsap.to(faqHeadingRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.1 });
 
           // Accordion content slides in with delay
           gsap.to(faqContentRef.current, {
@@ -947,48 +919,35 @@ export function PreSignUpV3() {
             y: 0,
             duration: 0.5,
             ease: "power2.out",
-            delay: 0.5,
+            delay: 0.25,
           });
         },
         onLeaveBack: () => {
-          // Reverse: hide FAQ and bring back testimonials
           gsap.to(faqContentRef.current, { opacity: 0, y: 60, duration: 0.3 });
           gsap.to(faqHeadingRef.current, { opacity: 0, y: 30, duration: 0.3 });
-          gsap.to(faqSectionRef.current, { autoAlpha: 0, duration: 0.3 });
-
-          // Bring back testimonials
-          gsap.to(testimSectionRef.current, { autoAlpha: 1, duration: 0.3 });
-          gsap.to(testimHeadingRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
-          gsap.to(testimContentRef.current, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" });
         },
       });
 
       // ═══════════════════════════════════════════════════════
-      // DIVERSIFY CTA — Step 1: FAQ slides up (parallax) revealing rounded card
+      // DIVERSIFY CTA — FAQ scrolls away naturally, Diversify revealed behind (parallax)
+      // FAQ at z-[40] scrolls over Diversify at z-[35]; show Diversify as FAQ approaches
       // ═══════════════════════════════════════════════════════
-      const faqDivTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: divTrigger1Ref.current,
-          start: "top bottom",
-          end: "top 20%",
-          scrub: 0.5,
-          onUpdate: (self) => {
-            // Mark Diversify section as active once FAQ is mostly gone
-            divSectionActive.current = self.progress > 0.5;
-          },
-          onLeaveBack: () => {
-            divSectionActive.current = false;
-          },
+      ScrollTrigger.create({
+        trigger: divTrigger1Ref.current,
+        start: "top bottom",
+        onEnter: () => {
+          gsap.to(divSectionRef.current, { autoAlpha: 1, duration: 0.3 });
+          gsap.to(divContentRef.current, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.15 });
+          divSectionActive.current = true;
+          // Hide header
+          gsap.to(headerRef.current!, { y: -100, duration: 0.3, ease: "power2.out" });
+        },
+        onLeaveBack: () => {
+          gsap.to(divContentRef.current, { opacity: 0, y: 40, duration: 0.3 });
+          gsap.to(divSectionRef.current, { autoAlpha: 0, duration: 0.3 });
+          divSectionActive.current = false;
         },
       });
-      // Show the Diversify section behind the FAQ (FAQ z-40, Diversify z-35)
-      faqDivTl.fromTo(divSectionRef.current, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.05, immediateRender: false }, 0);
-      // Content fades in as the card is revealed
-      faqDivTl.fromTo(divContentRef.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, 0.3);
-      // FAQ slides up off-screen with parallax
-      faqDivTl.fromTo(faqSectionRef.current, { y: 0 }, { y: "-100%", duration: 1, ease: "none", immediateRender: false }, 0);
-      // Hide the header as Diversify section is revealed
-      faqDivTl.fromTo(headerRef.current!, { y: 0 }, { y: -100, duration: 0.3, ease: "power2.out", immediateRender: false }, 0.5);
 
       // ═══════════════════════════════════════════════════════
       // DIVERSIFY CTA — Step 2: fluid clip-path expansion (scrub-based, delayed)
@@ -1392,12 +1351,12 @@ export function PreSignUpV3() {
       <section ref={hiwTrigger3Ref} className="h-screen" />
       <section ref={hiwTrigger4Ref} className="h-screen" />
 
-      {/* ═══ Bonds for Everyone — Fixed overlay ═══ */}
-      <div
+      {/* ═══ Bonds for Everyone — Normal scroll section ═══ */}
+      <section
         ref={bfeSectionRef}
-        className="fixed inset-0 w-full h-full z-[25] pointer-events-none invisible"
+        className="relative z-[25] bg-white py-40 desk-sm:py-44 desk-md:py-48 desk:py-52 desk-lg:py-56 px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20"
       >
-        <div className="pointer-events-auto w-full h-full bg-white flex flex-col items-center justify-center pt-16 desk-sm:pt-20 desk-md:pt-24 px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20">
+        <div className="flex flex-col items-center">
           {/* Heading */}
           <div ref={bfeHeadingRef} className="flex flex-col items-center gap-2 desk-md:gap-3 mb-10 desk-sm:mb-12 desk-md:mb-[60px] desk:mb-[65px] desk-lg:mb-[70px]">
             <p className="text-3xl desk-sm:text-4xl desk-md:text-5xl desk:text-6xl desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black text-center">
@@ -1432,17 +1391,14 @@ export function PreSignUpV3() {
             ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Bonds for Everyone trigger */}
-      <section ref={bfeTriggerRef} className="h-screen" />
-
-      {/* ═══ Testimonials — Fixed overlay ═══ */}
-      <div
+      {/* ═══ Testimonials — Normal scroll section (shorter bottom so FAQ peeks) ═══ */}
+      <section
         ref={testimSectionRef}
-        className="fixed inset-0 w-full h-full z-[30] pointer-events-none invisible"
+        className="relative z-[25] bg-white py-40 desk-sm:py-44 desk-md:py-48 desk:py-52 desk-lg:py-56 px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20"
       >
-        <div className="pointer-events-auto w-full h-full bg-white flex flex-col items-center justify-center pt-20 desk-md:pt-24 px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20">
+        <div className="flex flex-col items-center">
           {/* Heading */}
           <div ref={testimHeadingRef} className="mb-10 desk-md:mb-12 desk:mb-14 desk-lg:mb-16">
             <p className="text-3xl desk-sm:text-4xl desk-md:text-5xl desk:text-6xl desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-black text-center">
@@ -1455,51 +1411,41 @@ export function PreSignUpV3() {
             <TestimonialsCarousel />
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Testimonials trigger */}
-      <section ref={testimTriggerRef} className="h-screen" />
-
-      {/* ═══ FAQ — Fixed overlay ═══ */}
-      <div
+      {/* ═══ FAQ — Normal scroll section ═══ */}
+      <section
         ref={faqSectionRef}
-        className="fixed inset-0 w-full h-full z-[40] pointer-events-none invisible"
+        className="relative z-[40] bg-black min-h-screen flex items-center px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20"
+        style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
       >
-        <div
-          className="pointer-events-auto w-full h-full bg-black flex items-center justify-center pt-20 desk-md:pt-24 px-8 desk-sm:px-12 desk-md:px-16 desk:px-18 desk-lg:px-20"
-          style={{ fontFamily: "var(--font-instrument-sans), sans-serif" }}
-        >
-          <div className="flex gap-10 desk-sm:gap-12 desk-md:gap-16 desk:gap-18 desk-lg:gap-20 items-start w-full max-w-[900px] desk-sm:max-w-[1000px] desk-md:max-w-[1100px] desk:max-w-[1160px] desk-lg:max-w-[1220px]">
-            {/* Left column — heading + subtitle + support link */}
-            <div ref={faqHeadingRef} className="w-[240px] desk-sm:w-[280px] desk-md:w-[310px] desk:w-[325px] desk-lg:w-[340px] shrink-0">
-              <p className="text-3xl desk-sm:text-4xl desk-md:text-5xl desk:text-6xl desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-white">
-                FAQs
-              </p>
-              <p className="text-md desk-md:text-lg desk:text-xl font-normal tracking-[-0.32px] text-white/50 mt-3 leading-relaxed">
-                Your questions answered
-              </p>
-              <p className="text-sm desk-sm:text-base desk-md:text-lg desk:text-xl font-normal tracking-[-0.3px] text-white/50 mt-6 desk-md:mt-8 leading-relaxed">
-                Can&apos;t find what you&apos;re looking for?{" "}
-                Contact our{" "}
-                <a
-                  href="#"
-                  className="text-white font-semibold hover:underline"
-                >
-                  customer support team
-                </a>
-              </p>
-            </div>
+        <div className="flex gap-10 desk-sm:gap-12 desk-md:gap-16 desk:gap-18 desk-lg:gap-20 items-start w-full max-w-[900px] desk-sm:max-w-[1000px] desk-md:max-w-[1100px] desk:max-w-[1160px] desk-lg:max-w-[1220px] mx-auto">
+          {/* Left column — heading + subtitle + support link */}
+          <div ref={faqHeadingRef} className="w-[240px] desk-sm:w-[280px] desk-md:w-[310px] desk:w-[325px] desk-lg:w-[340px] shrink-0">
+            <p className="text-3xl desk-sm:text-4xl desk-md:text-5xl desk:text-6xl desk-lg:text-6xl font-normal leading-[1.2] tracking-[-0.96px] text-white">
+              FAQs
+            </p>
+            <p className="text-md desk-md:text-lg desk:text-xl font-normal tracking-[-0.32px] text-white/50 mt-3 leading-relaxed">
+              Your questions answered
+            </p>
+            <p className="text-sm desk-sm:text-base desk-md:text-lg desk:text-xl font-normal tracking-[-0.3px] text-white/50 mt-6 desk-md:mt-8 leading-relaxed">
+              Can&apos;t find what you&apos;re looking for?{" "}
+              Contact our{" "}
+              <a
+                href="#"
+                className="text-white font-semibold hover:underline"
+              >
+                customer support team
+              </a>
+            </p>
+          </div>
 
-            {/* Right column — accordion */}
-            <div ref={faqContentRef} className="flex-1 min-w-0">
-              <FAQAccordion />
-            </div>
+          {/* Right column — accordion */}
+          <div ref={faqContentRef} className="flex-1 min-w-0">
+            <FAQAccordion />
           </div>
         </div>
-      </div>
-
-      {/* FAQ trigger */}
-      <section ref={faqTriggerRef} className="h-screen" />
+      </section>
 
       {/* ═══ Diversify CTA — Fixed overlay ═══ */}
       <div
